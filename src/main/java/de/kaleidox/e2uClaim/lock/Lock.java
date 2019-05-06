@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import de.kaleidox.e2uClaim.E2UClaim;
-import de.kaleidox.e2uClaim.util.BukkitUtil;
+import de.kaleidox.e2uClaim.interfaces.WorldLockable;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -18,7 +18,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 
-public class Lock {
+public class Lock implements WorldLockable {
     private final World world;
     private final UUID owner;
     private final int[][] targets;
@@ -69,11 +69,12 @@ public class Lock {
         return world.getBlockAt(targets[0][0], targets[0][1], targets[0][2]).getType();
     }
 
-    public boolean canAccess(CommandSender player) {
-        return E2UClaim.Permission.OVERRIDE_LOCK.check(player) ||
-                (player instanceof Entity ? ((Entity) player).getUniqueId() : BukkitUtil.getUuid(player)).equals(owner);
+    @Override
+    public <T extends CommandSender & Entity> boolean canAccess(T player) {
+        return E2UClaim.Permission.OVERRIDE_LOCK.check(player) || player.getUniqueId().equals(owner);
     }
 
+    @Override
     public boolean isLocked(int[] xyz) {
         for (int[] locked : targets)
             if (Arrays.equals(locked, xyz))
