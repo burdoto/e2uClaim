@@ -37,6 +37,7 @@ public final class E2UClaim extends JavaPlugin {
     public static Logger LOGGER;
 
     private static Map<String, FileConfiguration> configs = new ConcurrentHashMap<>();
+    private static Map<String, Pair<File, FileConfiguration>> configFiles = new ConcurrentHashMap<>();
 
     @Override
     public boolean onCommand(
@@ -137,12 +138,26 @@ public final class E2UClaim extends JavaPlugin {
                 file.createNewFile();
 
                 YamlConfiguration configuration = new YamlConfiguration();
+                configFiles.put(name, new Pair<>(file, configuration));
                 configuration.load(file);
                 return configuration;
             } catch (IOException | InvalidConfigurationException e) {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    public static void set(String fileName, FileConfiguration configuration) throws IOException {
+        configs.replace(fileName, configuration);
+        Pair<File, FileConfiguration> old = configFiles.get(fileName);
+        File file = old.getKey();
+        configFiles.replace(fileName, new Pair<>(file, configuration));
+        save(fileName);
+    }
+
+    private static void save(String fileName) throws IOException {
+        Pair<File, FileConfiguration> pair = configFiles.get(fileName);
+        pair.getValue().save(pair.getKey());
     }
 
     public enum Permission {
@@ -168,6 +183,24 @@ public final class E2UClaim extends JavaPlugin {
             else if (customMissingMessage.isEmpty()) return false;
             else Chat.message(user, MessageType.ERROR, customMissingMessage);
             return false;
+        }
+    }
+
+    public static class Pair<K, V> {
+        private K key;
+        private V value;
+
+        public K getKey() {
+            return key;
+        }
+
+        public V getValue() {
+            return value;
+        }
+
+        public Pair(K key, V value) {
+            this.key = key;
+            this.value = value;
         }
     }
 }
