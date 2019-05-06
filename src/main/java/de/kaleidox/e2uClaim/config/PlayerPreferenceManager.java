@@ -42,10 +42,7 @@ public enum PlayerPreferenceManager implements Initializable, Terminatable {
         for (Map.Entry<UUID, Map<String, String>> entry : playerPropertyValueMap.entrySet()) {
             String uuid = entry.getKey().toString();
             Map<String, String> values = entry.getValue();
-            values.forEach((key, value) -> {
-                config.set(uuid + "." + key, value);
-            });
-            E2UClaim.set("userPreferences", config);
+            values.forEach((key, value) -> E2UClaim.getConfig("userPreferences").set(uuid + "." + key, value));
         }
     }
 

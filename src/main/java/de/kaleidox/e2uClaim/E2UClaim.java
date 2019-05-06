@@ -145,12 +145,6 @@ public final class E2UClaim extends JavaPlugin {
         });
     }
 
-    public static void set(String fileName, FileConfiguration configuration) throws IOException {
-        configs.replace(fileName, configuration);
-        File file = new File(PATH_BASE + fileName + ".yml");
-        configuration.save(file);
-    }
-
     public enum Permission {
         CREATE_LOCK("e2uclaim.lock", "You are not allowed to create locks!"),
         OVERRIDE_LOCK("e2uclaim.mod", "");
