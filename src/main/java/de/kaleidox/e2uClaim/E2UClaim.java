@@ -80,7 +80,7 @@ public final class E2UClaim extends JavaPlugin {
     public void onDisable() {
         super.onDisable();
 
-        LockManager.INSTANCE.store();
+        LockManager.INSTANCE.terminate();
 
         configs.forEach((name, config) -> {
             try {
@@ -118,10 +118,10 @@ public final class E2UClaim extends JavaPlugin {
                 E2UClaim.LOGGER.warning("World with name \"configVersion\" detected. This world will be ignored by e2uClaim.");
 
             Bukkit.getPluginManager().registerEvents(LockManager.INSTANCE, this);
-            LockManager.INSTANCE.load();
+            LockManager.INSTANCE.init();
 
             ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-            scheduler.scheduleAtFixedRate(LockManager.INSTANCE::store, 5, 5, TimeUnit.MINUTES);
+            scheduler.scheduleAtFixedRate(LockManager.INSTANCE::terminate, 5, 5, TimeUnit.MINUTES);
         } catch (PluginEnableException e) {
             LOGGER.severe("Unable to load " + toString() + ": " + e.getMessage());
             Bukkit.getPluginManager().disablePlugin(this);

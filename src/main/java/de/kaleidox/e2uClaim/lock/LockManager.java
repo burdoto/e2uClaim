@@ -14,6 +14,8 @@ import de.kaleidox.e2uClaim.E2UClaim;
 import de.kaleidox.e2uClaim.chat.Chat;
 import de.kaleidox.e2uClaim.chat.MessageType;
 import de.kaleidox.e2uClaim.exception.PluginEnableException;
+import de.kaleidox.e2uClaim.interfaces.Initializable;
+import de.kaleidox.e2uClaim.interfaces.Terminatable;
 import de.kaleidox.e2uClaim.util.WorldUtil;
 
 import org.bukkit.Bukkit;
@@ -36,7 +38,7 @@ import static de.kaleidox.e2uClaim.chat.Chat.message;
 import static de.kaleidox.e2uClaim.util.WorldUtil.breakDependent;
 import static de.kaleidox.e2uClaim.util.WorldUtil.xyz;
 
-public enum LockManager implements Listener {
+public enum LockManager implements Listener, Initializable, Terminatable {
     INSTANCE;
 
     private final Collection<Lock> locks = new ArrayList<>();
@@ -197,7 +199,8 @@ public enum LockManager implements Listener {
     }
 
     @SuppressWarnings("SwitchStatementWithTooFewBranches")
-    public void load() {
+    @Override
+    public void init() {
         FileConfiguration locks = E2UClaim.getConfig("locks");
 
         switch (locks.getInt("configVersion", 1)) {
@@ -221,7 +224,8 @@ public enum LockManager implements Listener {
         E2UClaim.LOGGER.info("Loaded " + this.locks.size() + " lock" + (this.locks.size() != 1 ? "s" : "") + "!");
     }
 
-    public void store() {
+    @Override
+    public void terminate() {
         FileConfiguration locks = E2UClaim.getConfig("locks");
         locks.set("configVersion", 1);
 
