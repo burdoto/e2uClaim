@@ -1,0 +1,25 @@
+apply plugin: 'java'
+
+group 'de.kaleidox'
+version '0.1.0'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories.jcenter()
+
+compileJava {
+    options.encoding = "UTF-8"
+}
+
+task pluginJarForTesting(type: Jar) {
+    from sourceSets.main.java.outputDir
+    from('src/main/resources')
+    destinationDir = file("test/plugins/")
+}
+
+dependencies {
+    compileOnly fileTree("libs")
+
+    compileOnly 'org.jetbrains:annotations:17.0.0'
+}

@@ -1,0 +1,19 @@
+main: de.kaleidox.e2uClaim.E2UClaim
+name: e2uClaim
+version: 0.1.0
+author: Kaleidox
+description: easy-to-use claiming plugin
+api-version: 1.13
+commands:
+  autolock:
+    description: Toggle automatic locking
+    permission: e2uclaim.lock
+    permission-message: "§7[§ae2uClaim§7] §cYou are missing permission!"
+  lock:
+    description: Locks a block
+    permission: e2uclaim.lock
+    permission-message: "§7[§ae2uClaim§7] §cYou are missing permission!"
+  unlock:
+    description: Unlocks a block
+    permission: e2uclaim.lock
+    permission-message: "§7[§ae2uClaim§7] §cYou are missing permission!"
