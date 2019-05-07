@@ -1,7 +1,6 @@
 package de.kaleidox.e2uClaim.config;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -20,11 +19,13 @@ public enum PlayerPreferenceManager implements Initializable, Terminatable {
     private final Map<String, String> defaultValues = new ConcurrentHashMap<>();
 
     @Override
-    public void init() throws Throwable {
+    public void init() throws IOException {
         FileConfiguration config = E2UClaim.getConfig("userPreferences");
         FileConfiguration defaults = E2UClaim.getConfig("config");
-        defaultValues.put("autoLock", Boolean.toString(defaults.getBoolean("defaults.auto-lock")));
-        defaultValues.put("toolItem", defaults.getString("defaults.tool-item"));
+        Objects.requireNonNull(defaults.getConfigurationSection("defaults.preferences")).getKeys(false).forEach(property -> {
+            String value = config.getString("defaults.preferences." + property);
+            defaultValues.put(property, value);
+        });
         Objects.requireNonNull(config.getKeys(false)).forEach(key -> {
             UUID uniqueId = UUID.fromString(key);
             Map<String, String> map = new ConcurrentHashMap<>();
@@ -51,17 +52,18 @@ public enum PlayerPreferenceManager implements Initializable, Terminatable {
         return properties.get(property);
     }
 
-    public void setProperty(UUID uuid, String property, String value) {
+    public void setProperty(UUID uuid, String property, Object value) {
+        String valueString = String.valueOf(value);
         Map<String, String> properties = playerPropertyValueMap.get(uuid);
         if (properties == null) {
             properties = new ConcurrentHashMap<>();
-            properties.put(property, value);
+            properties.put(property, valueString);
             playerPropertyValueMap.put(uuid, properties);
         } else {
             if (properties.containsKey(property)) {
-                properties.replace(property, value);
+                properties.replace(property, valueString);
             } else {
-                properties.put(property, value);
+                properties.put(property, valueString);
             }
             playerPropertyValueMap.replace(uuid, properties);
         }
