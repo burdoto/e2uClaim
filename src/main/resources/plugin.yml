@@ -13,3 +13,11 @@ commands:
     description: Unlocks a block
     permission: e2uclaim.lock
     permission-message: "§7[§ae2uClaim§7] §cYou are missing permission!"
+  claim:
+    description: Claim an area for yourself
+    permission: e2uclaim.claim
+    permission-message: "§7[§ae2uClaim§7] §cYou are missing permission!"
+  unclaim:
+    description: Unclaim an area you have claimed before
+    permission: e2uclaim.claim
+    permission-message: "§7[§ae2uClaim§7] §cYou are missing permission!"

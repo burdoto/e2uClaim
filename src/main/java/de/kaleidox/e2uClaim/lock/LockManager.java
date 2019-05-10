@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import de.kaleidox.e2uClaim.E2UClaim;
 import de.kaleidox.e2uClaim.chat.Chat;
 import de.kaleidox.e2uClaim.chat.MessageType;
+import de.kaleidox.e2uClaim.claim.Claim;
 import de.kaleidox.e2uClaim.exception.PluginEnableException;
 import de.kaleidox.e2uClaim.interfaces.Initializable;
 import de.kaleidox.e2uClaim.interfaces.Terminatable;
@@ -34,18 +35,20 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import static de.kaleidox.e2uClaim.E2UClaim.LOGGER;
 import static de.kaleidox.e2uClaim.chat.Chat.message;
+import static de.kaleidox.e2uClaim.util.ConfigurationUtil.getConfigSection;
 import static de.kaleidox.e2uClaim.util.WorldUtil.breakDependent;
 import static de.kaleidox.e2uClaim.util.WorldUtil.xyz;
 
 public enum LockManager implements Listener, Initializable, Terminatable {
     INSTANCE;
 
-    private final Collection<Lock> locks = new ArrayList<>();
+    public final Collection<Lock> locks = new ArrayList<>();
     private final Collection<Player> awaitingLock = new ArrayList<>();
     private final Collection<Player> awaitingUnlock = new ArrayList<>();
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onSignChange(SignChangeEvent event) {
         if (event.getBlock().getWorld().getName().equals("configVersion")) return;
         String[] lines = event.getLines();
@@ -115,7 +118,7 @@ public enum LockManager implements Listener, Initializable, Terminatable {
         message(player, MessageType.HINT, "Click a block to unlock it!");
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerInteractEvent(PlayerInteractEvent event) {
         if (event.getPlayer().getWorld().getName().equals("configVersion")) return;
 
@@ -173,7 +176,7 @@ public enum LockManager implements Listener, Initializable, Terminatable {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         if (event.getBlock().getWorld().getName().equals("configVersion")) return;
         final int[] xyz = xyz(event.getBlock().getLocation());
@@ -201,48 +204,63 @@ public enum LockManager implements Listener, Initializable, Terminatable {
     @SuppressWarnings("SwitchStatementWithTooFewBranches")
     @Override
     public void init() {
-        FileConfiguration locks = E2UClaim.getConfig("locks");
+        FileConfiguration claims = E2UClaim.getConfig("locks");
 
-        switch (locks.getInt("configVersion", 1)) {
+        switch (claims.getInt("configVersion", 1)) {
             default:
-                throw new PluginEnableException("Unknown configuration version: " + locks.getInt("configVersion"));
+                throw new PluginEnableException("Unknown configuration version: " + claims.getInt("configVersion"));
             case 1:
-                Set<String> worlds = locks.getKeys(false);
-                worlds.forEach(worldName -> {
-                    if (worldName.equals("configVersion")) return;
+                for (String worldName : claims.getKeys(false)) {
+                    if (worldName.equals("configVersion")) continue;
                     World world = Bukkit.getWorld(worldName);
-                    if (world == null) return;
-                    Set<String> thisWorld = Objects.requireNonNull(locks
-                            .getConfigurationSection(worldName)).getKeys(false);
-                    thisWorld.forEach(lockNr -> this.locks.add(Lock.load(world, Objects.requireNonNull(
-                            Objects.requireNonNull(locks.getConfigurationSection(worldName))
-                                    .getConfigurationSection(lockNr)))));
-                });
-                break;
+                    if (world == null) {
+                        LOGGER.warning("Skipped loading locks for unknown world: " + worldName);
+                        continue;
+                    }
+                    ConfigurationSection worldSection = getConfigSection(claims, worldName);
+                    for (String lockName : worldSection.getKeys(false)) {
+                        LOGGER.fine("Loading lock " + lockName + "...");
+                        try {
+                            this.locks.add(Lock.load(world, getConfigSection(worldSection, lockName)));
+                        } catch (Exception e) {
+                            LOGGER.severe("Error loading lock " + lockName + ": " + e.getMessage());
+                        }
+                    }
+                }
         }
 
-        E2UClaim.LOGGER.info("Loaded " + this.locks.size() + " lock" + (this.locks.size() != 1 ? "s" : "") + "!");
+        LOGGER.info("Loaded " + this.locks.size() + " lock" + (this.locks.size() != 1 ? "s" : "") + "!");
     }
 
     @Override
     public void terminate() {
-        FileConfiguration locks = E2UClaim.getConfig("locks");
-        locks.set("configVersion", 1);
+        int stored = 0;
+        FileConfiguration claims = E2UClaim.getConfig("locks");
+        claims.set("configVersion", 1);
 
         Map<String, List<Lock>> perWorldLocks = new HashMap<>();
-        this.locks.forEach(lock -> {
-            String worldName = lock.getWorld().getName();
-            if (worldName.equals("configVersion")) return;
-            perWorldLocks.compute(worldName, (k, v) -> (v == null ? new ArrayList<>() : v)).add(lock);
-        });
+        for (Lock me : this.locks) {
+            String worldName = me.getWorld().getName();
+            if (worldName.equals("configVersion")) continue;
+            perWorldLocks.compute(worldName, (k, v) -> (v == null ? new ArrayList<>() : v)).add(me);
+        }
 
-        perWorldLocks.forEach((world, lock) -> {
-            ConfigurationSection configurationSection = locks.createSection(world);
+        for (Map.Entry<String, List<Lock>> entry : perWorldLocks.entrySet()) {
+            String world = entry.getKey();
+            List<Lock> locks = entry.getValue();
+            ConfigurationSection worldSection = claims.createSection(world);
             int c = 0;
-            for (Lock l : lock) {
-                assert configurationSection != null;
-                l.save(configurationSection.createSection(String.valueOf(c++)));
+            for (Lock me : locks) {
+                assert worldSection != null;
+                try {
+                    me.save(worldSection.createSection("lock" + c++));
+                    stored++;
+                } catch (Exception e) {
+                    LOGGER.severe("Error saving lock lock" + c + ": " + e.getMessage());
+                }
             }
-        });
+        }
+
+        LOGGER.info("Saved " + stored + " lock" + (stored != 1 ? "s" : "") + "!");
     }
 }
