@@ -10,6 +10,7 @@ import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.Contract;
 
@@ -63,11 +64,18 @@ public final class WorldUtil {
         };
     }
 
+    public static int[][] sort(int[] pos1, int[] pos2) {
+        return new int[][]{
+                new int[]{min(pos1[0], pos2[0]), min(pos1[1], pos2[1]), min(pos1[2], pos2[2])},
+                new int[]{max(pos1[0], pos2[0]), max(pos1[1], pos2[1]), max(pos1[2], pos2[2])}
+        };
+    }
+
     public static void breakDependent(Player player, Block block) {
         switch (player.getGameMode()) {
             case CREATIVE:
             case SPECTATOR:
-                block.setType(Material.AIR);
+                block.breakNaturally(new ItemStack(block.getType(), 0));
                 break;
             case SURVIVAL:
             case ADVENTURE:

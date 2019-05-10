@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import de.kaleidox.e2uClaim.E2UClaim;
 import de.kaleidox.e2uClaim.interfaces.WorldLockable;
+import de.kaleidox.e2uClaim.util.WorldUtil;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -85,6 +86,13 @@ public class Lock implements WorldLockable {
     public boolean interferes(Lock with) {
         for (int[] locked : with.targets)
             if (isLocked(locked))
+                return true;
+        return false;
+    }
+
+    public boolean interferes(int[][] area) {
+        for (int[] test : targets)
+            if (WorldUtil.inside(area, test))
                 return true;
         return false;
     }

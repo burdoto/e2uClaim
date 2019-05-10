@@ -9,7 +9,7 @@ public final class Const {
     static {
         try {
             Properties properties = new Properties();
-            properties.load(ClassLoader.getSystemResourceAsStream("e2uClaim/const.properties"));
+            properties.load(ClassLoader.getSystemResourceAsStream("const.properties"));
 
             VERSION = properties.getProperty("version");
         } catch (IOException e) {
