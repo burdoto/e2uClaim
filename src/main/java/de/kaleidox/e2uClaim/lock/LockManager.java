@@ -12,9 +12,9 @@ import de.kaleidox.e2uClaim.E2UClaim;
 import de.kaleidox.e2uClaim.chat.Chat;
 import de.kaleidox.e2uClaim.chat.MessageType;
 import de.kaleidox.e2uClaim.exception.PluginEnableException;
-import de.kaleidox.e2uClaim.interfaces.Initializable;
-import de.kaleidox.e2uClaim.interfaces.Terminatable;
 import de.kaleidox.e2uClaim.util.WorldUtil;
+import de.kaleidox.util.interfaces.Initializable;
+import de.kaleidox.util.interfaces.Terminatable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;

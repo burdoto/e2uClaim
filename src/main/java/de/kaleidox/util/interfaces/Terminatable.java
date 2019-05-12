@@ -1,4 +1,4 @@
-package de.kaleidox.e2uClaim.interfaces;
+package de.kaleidox.util.interfaces;
 
 import java.io.IOException;
 
