@@ -225,6 +225,7 @@ public enum ClaimManager implements Listener, Initializable, Terminatable {
         }
 
         LOGGER.info("Loaded " + this.claims.size() + " claim" + (this.claims.size() != 1 ? "s" : "") + "!");
+        Bukkit.getPluginManager().registerEvents(this, E2UClaim.INSTANCE);
     }
 
     @Override

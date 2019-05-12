@@ -131,8 +131,6 @@ public final class E2UClaim extends JavaPlugin {
 
             LockManager.INSTANCE.init();
             ClaimManager.INSTANCE.init();
-            Bukkit.getPluginManager().registerEvents(LockManager.INSTANCE, this);
-            Bukkit.getPluginManager().registerEvents(ClaimManager.INSTANCE, this);
 
             ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
             scheduler.scheduleAtFixedRate(this::cycle, 5, 5, TimeUnit.MINUTES);

@@ -234,6 +234,7 @@ public enum LockManager implements Listener, Initializable, Terminatable {
         }
 
         LOGGER.info("Loaded " + this.locks.size() + " lock" + (this.locks.size() != 1 ? "s" : "") + "!");
+        Bukkit.getPluginManager().registerEvents(this, E2UClaim.INSTANCE);
     }
 
     @Override
