@@ -49,6 +49,8 @@ public enum ClaimManager implements Listener, Initializable, Terminatable {
     private final Map<Player, int[]> awaitingClaim = new ConcurrentHashMap<>();
 
     public void requestClaiming(Player player) {
+        if (awaitingClaim.remove(player) != null)
+            message(player, MessageType.WARN, "Aborted previous %s command!", "/claim");
         awaitingClaim.compute(player, (k, v) -> new int[0]);
         message(player, MessageType.HINT, "Click the first corner to start claiming!");
     }
