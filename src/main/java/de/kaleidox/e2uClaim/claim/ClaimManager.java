@@ -114,7 +114,7 @@ public enum ClaimManager implements Listener, Initializable, Terminatable {
                             .filter(lock -> lock.interferes(area))
                             .collect(Collectors.toSet());
                     if (interferingLocks.size() > 0) {
-                        message(player, MessageType.ERROR, "This claim area interferes with %s locks!",
+                        message(player, MessageType.ERROR, "This claim area overlaps with %s locks!",
                                 interferingLocks.size());
                         message(player, MessageType.WARN, "Claiming aborted.");
                         awaitingClaim.remove(player);
@@ -125,10 +125,10 @@ public enum ClaimManager implements Listener, Initializable, Terminatable {
                     // test for interfering claims
                     Set<Claim> interferingClaims = claims.stream()
                             .filter(claim -> !claim.canAccess(player))
-                            .filter(claim -> claim.interferes(area))
+                            .filter(claim -> claim.overlaps(area))
                             .collect(Collectors.toSet());
                     if (interferingClaims.size() > 0) {
-                        message(player, MessageType.ERROR, "This claim area interferes with %s other claims!",
+                        message(player, MessageType.ERROR, "This claim area overlaps with %s other claims!",
                                 interferingClaims.size());
                         message(player, MessageType.WARN, "Claiming aborted.");
                         awaitingClaim.remove(player);

@@ -86,15 +86,26 @@ public class Claim implements WorldLockable {
         return WorldUtil.inside(area, xyz);
     }
 
-    public boolean interferes(int[][] check) {
+    public boolean overlaps(int[][] check) { // FIXME: 12.05.2019 does not work
         int[][] areaC = sort(check[0], check[1]);
+        int[][] areaM = sort(area[0], area[1]);
 
-        return areaC[0][0] < area[1][0]
-                && areaC[0][1] < area[1][1]
-                && areaC[0][2] < area[1][2]
-                && areaC[1][0] > area[0][0]
-                && areaC[1][1] > area[0][1]
-                && areaC[1][2] > area[0][2];
+        int min_x1 = areaC[0][0];
+        int min_x2 = areaM[0][0];
+        int max_x1 = areaC[1][0];
+        int max_x2 = areaM[1][0];
+        int min_y1 = areaC[0][1];
+        int min_y2 = areaM[0][1];
+        int max_y1 = areaC[1][1];
+        int max_y2 = areaM[1][1];
+        int min_z1 = areaC[0][2];
+        int min_z2 = areaM[0][2];
+        int max_z1 = areaC[1][2];
+        int max_z2 = areaM[1][2];
+
+        return ((min_x1 <= min_x2 && min_x2 <= max_x1) || (min_x2 <= min_x1 && min_x1 <= max_x2)) &&
+                ((min_y1 <= min_y2 && min_y2 <= max_y1) || (min_y2 <= min_y1 && min_y1 <= max_y2)) &&
+                ((min_z1 <= min_z2 && min_z2 <= max_z1) || (min_z2 <= min_z1 && min_z1 <= max_z2));
     }
 
     public static Claim load(World world, ConfigurationSection config) {

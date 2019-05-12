@@ -92,7 +92,7 @@ public enum LockManager implements Listener, Initializable, Terminatable {
         Lock lock = new Lock(signBlock.getWorld(), player.getUniqueId(), target, xyz(signBlock.getLocation()));
         for (Lock iter : locks)
             if (lock.interferes(iter)) {
-                message(player, MessageType.ERROR, "This lock interferes with an existing lock!");
+                message(player, MessageType.ERROR, "This lock overlaps with an existing lock!");
                 breakDependent(player, signBlock);
                 return;
             }
@@ -143,7 +143,7 @@ public enum LockManager implements Listener, Initializable, Terminatable {
                             " supported. Please lock both sides of the chest seperately.");
             } else {
                 event.setCancelled(true);
-                message(player, MessageType.ERROR, "This lock interferes with an existing lock!");
+                message(player, MessageType.ERROR, "This lock overlaps with an existing lock!");
             }
         } else if (awaitingUnlock.remove(player)
                 && (event.getAction() == Action.LEFT_CLICK_BLOCK
