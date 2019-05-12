@@ -1,9 +1,7 @@
 package de.kaleidox.e2uClaim.util;
 
-import java.util.IntSummaryStatistics;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 import de.kaleidox.e2uClaim.E2UClaim;
