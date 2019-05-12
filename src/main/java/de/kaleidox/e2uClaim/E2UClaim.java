@@ -15,6 +15,8 @@ import de.kaleidox.e2uClaim.claim.ClaimManager;
 import de.kaleidox.e2uClaim.exception.PluginEnableException;
 import de.kaleidox.e2uClaim.lock.LockManager;
 import de.kaleidox.e2uClaim.util.BukkitUtil;
+import de.kaleidox.util.interfaces.Initializable;
+import de.kaleidox.util.interfaces.Terminatable;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -37,7 +39,23 @@ public final class E2UClaim extends JavaPlugin {
     public static E2UClaim INSTANCE;
     public static Logger LOGGER;
 
-    private static Map<String, FileConfiguration> configs = new ConcurrentHashMap<>();
+    private static Map<String, FileConfiguration> configs;
+    private static Initializable[] initializables;
+    private static Terminatable[] terminatables;
+
+    static {
+        configs = new ConcurrentHashMap<>();
+
+        initializables = new Initializable[]{
+                LockManager.INSTANCE,
+                ClaimManager.INSTANCE
+        };
+
+        terminatables = new Terminatable[]{
+                LockManager.INSTANCE,
+                ClaimManager.INSTANCE
+        };
+    }
 
     @Override
     public boolean onCommand(
@@ -94,8 +112,13 @@ public final class E2UClaim extends JavaPlugin {
     public void onDisable() {
         super.onDisable();
 
-        LockManager.INSTANCE.terminate();
-        ClaimManager.INSTANCE.terminate();
+        for (Terminatable terminatable : terminatables) {
+            try {
+                terminatable.terminate();
+            } catch (IOException e) {
+                LOGGER.severe("Error terminating " + terminatable.toString());
+            }
+        }
 
         configs.forEach((name, config) -> {
             try {
@@ -129,8 +152,13 @@ public final class E2UClaim extends JavaPlugin {
             if (configVersion != null)
                 E2UClaim.LOGGER.warning("World with name \"configVersion\" detected. This world will be ignored by e2uClaim.");
 
-            LockManager.INSTANCE.init();
-            ClaimManager.INSTANCE.init();
+            for (Initializable initializable : initializables) {
+                try {
+                    initializable.init();
+                } catch (IOException e) {
+                    LOGGER.severe("Error initializing " + initializable.toString());
+                }
+            }
 
             ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
             scheduler.scheduleAtFixedRate(this::cycle, 5, 5, TimeUnit.MINUTES);
