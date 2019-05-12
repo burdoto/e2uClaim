@@ -35,6 +35,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import static de.kaleidox.e2uClaim.E2UClaim.LOGGER;
 import static de.kaleidox.e2uClaim.chat.Chat.message;
@@ -186,6 +187,11 @@ public enum ClaimManager implements Listener, Initializable, Terminatable {
         final int[] xyz = xyz(event.getBlock().getLocation());
 
         protecc(event.getPlayer(), xyz, event);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        awaitingClaim.remove(event.getPlayer());
     }
 
     @SuppressWarnings("SwitchStatementWithTooFewBranches")

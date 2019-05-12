@@ -34,6 +34,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import static de.kaleidox.e2uClaim.E2UClaim.LOGGER;
 import static de.kaleidox.e2uClaim.chat.Chat.message;
@@ -199,6 +200,12 @@ public enum LockManager implements Listener, Initializable, Terminatable {
                 message(event.getPlayer(), MessageType.INFO, "Removed lock from block %s at %s.",
                         lock.getMainTargetMaterial(), Arrays.toString(lock.getMainTarget()));
         });
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        awaitingLock.remove(event.getPlayer());
+        awaitingUnlock.remove(event.getPlayer());
     }
 
     @SuppressWarnings("SwitchStatementWithTooFewBranches")
