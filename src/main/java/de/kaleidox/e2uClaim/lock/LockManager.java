@@ -154,7 +154,7 @@ public enum LockManager implements Listener, Initializable, Terminatable {
                     .filter(lock -> lock.canAccess(player))
                     .collect(Collectors.toList());
             if (toBeRemoved.size() > 1)
-                E2UClaim.LOGGER.warning("Suspicious unlock action: More than 1 lock found!");
+                LOGGER.warning("Suspicious unlock action: More than 1 lock found!");
             for (Lock oldLock : toBeRemoved) {
                 if (locks.remove(oldLock)) {
                     oldLock.getOrigin()
