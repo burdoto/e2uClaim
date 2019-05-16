@@ -3,7 +3,9 @@ package de.kaleidox.e2uClaim;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -42,6 +44,7 @@ public final class E2UClaim extends JavaPlugin {
     private static final Closeable[] closeables;
     public static E2UClaim INSTANCE;
     public static Logger LOGGER;
+    public static Const CONST;
     private static Map<String, FileConfiguration> configs = new ConcurrentHashMap<>();
 
     static {
@@ -151,6 +154,7 @@ public final class E2UClaim extends JavaPlugin {
     @Override
     public void onEnable() {
         try {
+            CONST = new Const();
             Plugin worldEdit = Bukkit.getPluginManager().getPlugin("WorldEdit");
             Plugin worldGuard = Bukkit.getPluginManager().getPlugin("WorldGuard");
             if (worldEdit != null && worldGuard != null) {
@@ -211,6 +215,23 @@ public final class E2UClaim extends JavaPlugin {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    public final static class Const {
+        public final String VERSION;
+
+        private Const() {
+            try {
+                YamlConfiguration yml = new YamlConfiguration();
+                yml.load(new InputStreamReader(
+                        Objects.requireNonNull(Const.class.getClassLoader().getResourceAsStream("plugin.yml"),
+                                "Could not access plugin.yml")));
+
+                VERSION = yml.getString("version");
+            } catch (IOException | InvalidConfigurationException e) {
+                throw new AssertionError("Unexpected Exception", e);
+            }
+        }
     }
 
     public enum Permission {
