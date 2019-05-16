@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 import de.kaleidox.e2uClaim.chat.Chat;
 import de.kaleidox.e2uClaim.chat.MessageType;
 import de.kaleidox.e2uClaim.claim.ClaimManager;
-import de.kaleidox.e2uClaim.command.SetupCommand;
+import de.kaleidox.e2uClaim.command.SystemCommand;
 import de.kaleidox.e2uClaim.exception.PluginEnableException;
 import de.kaleidox.e2uClaim.interfaces.Initializable;
 import de.kaleidox.e2uClaim.lock.LockManager;
@@ -57,6 +57,18 @@ public final class E2UClaim extends JavaPlugin {
     }
 
     @Override
+    public void reloadConfig() {
+        configs.forEach((name, config) -> {
+            try {
+                File file = new File(PATH_BASE + name + ".yml");
+                config.load(name);
+            } catch (InvalidConfigurationException | IOException e) {
+                LOGGER.severe("Error reloading config " + name + ": " + e.getMessage());
+            }
+        });
+    }
+
+    @Override
     public boolean onCommand(
             @NotNull CommandSender sender,
             @NotNull Command command,
@@ -70,6 +82,9 @@ public final class E2UClaim extends JavaPlugin {
                 .orElse(false)) return false;
 
         switch (label.toLowerCase()) {
+            case "e2uclaim":
+            case "e2uc":
+                return SystemCommand.INSTANCE.execute(sender, args);
             case "lock":
                 playerOptional.ifPresent(LockManager.INSTANCE::requestLock);
                 break;

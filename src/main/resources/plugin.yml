@@ -5,6 +5,12 @@ author: Kaleidox
 description: easy-to-use claiming plugin
 api-version: 1.13
 commands:
+  e2uClaim:
+    aliases:
+      - e2uc
+    description: e2uClaim configuration command
+    permission: e2uclaim.admin
+    permission-message: "§7[§ae2uClaim§7] §cYou are missing permission!"
   lock:
     description: Locks a block
     permission: e2uclaim.lock
