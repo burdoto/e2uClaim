@@ -95,6 +95,13 @@ public enum ClaimManager implements Listener, Initializable, Terminatable {
         if (awaitingClaim.containsKey(player)
                 && (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK)) {
             // any claim create hit
+            if (event.isCancelled()) {
+                message(player, MessageType.ERROR, "This block is protected by another plugin!");
+                message(player, MessageType.WARN, "Claiming aborted.");
+                awaitingClaim.remove(player);
+                return;
+            }
+
             int[] prevTarget = awaitingClaim.get(player);
 
             if (prevTarget.length == 0) {
@@ -107,6 +114,13 @@ public enum ClaimManager implements Listener, Initializable, Terminatable {
                 event.setCancelled(true);
             } else {
                 // second claim block
+                if (event.isCancelled()) {
+                    message(player, MessageType.ERROR, "This block is protected by another plugin!");
+                    message(player, MessageType.WARN, "Claiming aborted.");
+                    awaitingClaim.remove(player);
+                    return;
+                }
+
                 if (claims.stream().noneMatch(claim -> claim.isLocked(xyz))) {
                     int[][] area = WorldUtil.sort(xyz, prevTarget);
 
