@@ -1,5 +1,7 @@
 package de.kaleidox.e2uClaim.command;
 
+import java.util.ArrayList;
+
 import de.kaleidox.e2uClaim.E2UClaim;
 import de.kaleidox.e2uClaim.chat.MessageType;
 
@@ -14,7 +16,7 @@ public enum SystemCommand implements Subcommand {
     public boolean execute(CommandSender sender, String[] args) {
         switch (args.length) {
             case 0:
-                message(sender, MessageType.HINT, "e2uClaim v"+ E2UClaim.CONST.VERSION);
+                message(sender, MessageType.HINT, "e2uClaim v" + E2UClaim.CONST.VERSION);
                 return true;
             case 1:
                 switch (args[0].toLowerCase()) {
@@ -26,5 +28,15 @@ public enum SystemCommand implements Subcommand {
         }
 
         return false;
+    }
+
+    @SuppressWarnings("SwitchStatementWithTooFewBranches")
+    @Override
+    public void tabComplete(CommandSender sender, String alias, String[] args, ArrayList<String> list) {
+        switch (args.length) {
+            case 0:
+                list.add("reload");
+                break;
+        }
     }
 }

@@ -4,6 +4,8 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,7 +28,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -105,10 +106,24 @@ public final class E2UClaim extends JavaPlugin {
         return super.onCommand(sender, command, label, args);
     }
 
-    @Nullable
     @Override
-    public PluginCommand getCommand(@NotNull String name) {
-        return super.getCommand(name);
+    public List<String> onTabComplete(
+            @NotNull CommandSender sender,
+            @NotNull Command command,
+            @NotNull String alias,
+            @NotNull String[] args
+    ) {
+        ArrayList<String> yields = new ArrayList<>();
+
+        switch (alias.toLowerCase()) {
+            case "e2uclaim":
+            case "e2uc":
+                SystemCommand.INSTANCE.tabComplete(sender, alias, args, yields);
+                break;
+        }
+
+        yields.removeIf(str -> str.indexOf(args[args.length - 1]) != 0);
+        return yields;
     }
 
     @Override
