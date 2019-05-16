@@ -1,5 +1,6 @@
 package de.kaleidox.e2uClaim;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -13,7 +14,9 @@ import java.util.logging.Logger;
 import de.kaleidox.e2uClaim.chat.Chat;
 import de.kaleidox.e2uClaim.chat.MessageType;
 import de.kaleidox.e2uClaim.claim.ClaimManager;
+import de.kaleidox.e2uClaim.command.SetupCommand;
 import de.kaleidox.e2uClaim.exception.PluginEnableException;
+import de.kaleidox.e2uClaim.interfaces.Initializable;
 import de.kaleidox.e2uClaim.lock.LockManager;
 import de.kaleidox.e2uClaim.util.BukkitUtil;
 
@@ -35,11 +38,23 @@ import org.jetbrains.annotations.Nullable;
 
 public final class E2UClaim extends JavaPlugin {
     public static final String PATH_BASE = "plugins/e2uClaim/";
-
+    private static final Initializable[] initializables;
+    private static final Closeable[] closeables;
     public static E2UClaim INSTANCE;
     public static Logger LOGGER;
-
     private static Map<String, FileConfiguration> configs = new ConcurrentHashMap<>();
+
+    static {
+        initializables = new Initializable[]{
+                ClaimManager.INSTANCE,
+                LockManager.INSTANCE
+        };
+
+        closeables = new Closeable[]{
+                ClaimManager.INSTANCE,
+                LockManager.INSTANCE
+        };
+    }
 
     @Override
     public boolean onCommand(
@@ -98,8 +113,13 @@ public final class E2UClaim extends JavaPlugin {
     public void onDisable() {
         super.onDisable();
 
-        LockManager.INSTANCE.terminate();
-        ClaimManager.INSTANCE.terminate();
+        for (Closeable closeable : closeables) {
+            try {
+                closeable.close();
+            } catch (IOException e) {
+                LOGGER.severe("Error closing " + closeable.toString() + ": " + e.getMessage());
+            }
+        }
 
         configs.forEach((name, config) -> {
             try {
@@ -133,10 +153,13 @@ public final class E2UClaim extends JavaPlugin {
             if (configVersion != null)
                 E2UClaim.LOGGER.warning("World with name \"configVersion\" detected. This world will be ignored by e2uClaim.");
 
-            LockManager.INSTANCE.init();
-            ClaimManager.INSTANCE.init();
-            Bukkit.getPluginManager().registerEvents(LockManager.INSTANCE, this);
-            Bukkit.getPluginManager().registerEvents(ClaimManager.INSTANCE, this);
+            for (Initializable initializable : initializables) {
+                try {
+                    initializable.init();
+                } catch (IOException e) {
+                    LOGGER.severe("Error initializing " + initializable.toString() + ": " + e.getMessage());
+                }
+            }
 
             ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
             scheduler.scheduleAtFixedRate(this::cycle, 5, 5, TimeUnit.MINUTES);

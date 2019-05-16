@@ -1,5 +1,6 @@
 package de.kaleidox.e2uClaim.lock;
 
+import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,7 +14,6 @@ import de.kaleidox.e2uClaim.chat.Chat;
 import de.kaleidox.e2uClaim.chat.MessageType;
 import de.kaleidox.e2uClaim.exception.PluginEnableException;
 import de.kaleidox.e2uClaim.interfaces.Initializable;
-import de.kaleidox.e2uClaim.interfaces.Terminatable;
 import de.kaleidox.e2uClaim.util.WorldUtil;
 
 import org.bukkit.Bukkit;
@@ -39,7 +39,7 @@ import static de.kaleidox.e2uClaim.util.ConfigurationUtil.getConfigSection;
 import static de.kaleidox.e2uClaim.util.WorldUtil.breakDependent;
 import static de.kaleidox.e2uClaim.util.WorldUtil.xyz;
 
-public enum LockManager implements Listener, Initializable, Terminatable {
+public enum LockManager implements Listener, Initializable, Closeable {
     INSTANCE;
 
     public final Collection<Lock> locks = new ArrayList<>();
@@ -208,6 +208,8 @@ public enum LockManager implements Listener, Initializable, Terminatable {
     @SuppressWarnings("SwitchStatementWithTooFewBranches")
     @Override
     public void init() {
+        Bukkit.getPluginManager().registerEvents(LockManager.INSTANCE, E2UClaim.INSTANCE);
+
         FileConfiguration claims = E2UClaim.getConfig("locks");
 
         switch (claims.getInt("configVersion", 1)) {
@@ -237,7 +239,7 @@ public enum LockManager implements Listener, Initializable, Terminatable {
     }
 
     @Override
-    public void terminate() {
+    public void close() {
         int stored = 0;
         FileConfiguration claims = E2UClaim.getConfig("locks");
         claims.set("configVersion", 1);

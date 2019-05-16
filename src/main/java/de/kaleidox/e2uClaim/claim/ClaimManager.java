@@ -1,5 +1,6 @@
 package de.kaleidox.e2uClaim.claim;
 
+import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,7 +15,6 @@ import de.kaleidox.e2uClaim.E2UClaim;
 import de.kaleidox.e2uClaim.chat.MessageType;
 import de.kaleidox.e2uClaim.exception.PluginEnableException;
 import de.kaleidox.e2uClaim.interfaces.Initializable;
-import de.kaleidox.e2uClaim.interfaces.Terminatable;
 import de.kaleidox.e2uClaim.lock.Lock;
 import de.kaleidox.e2uClaim.lock.LockManager;
 import de.kaleidox.e2uClaim.util.BukkitUtil;
@@ -42,7 +42,7 @@ import static de.kaleidox.e2uClaim.chat.Chat.message;
 import static de.kaleidox.e2uClaim.util.ConfigurationUtil.getConfigSection;
 import static de.kaleidox.e2uClaim.util.WorldUtil.xyz;
 
-public enum ClaimManager implements Listener, Initializable, Terminatable {
+public enum ClaimManager implements Listener, Initializable, Closeable {
     INSTANCE;
 
     private final Collection<Claim> claims = new ArrayList<>();
@@ -213,6 +213,8 @@ public enum ClaimManager implements Listener, Initializable, Terminatable {
     @SuppressWarnings("SwitchStatementWithTooFewBranches")
     @Override
     public void init() {
+        Bukkit.getPluginManager().registerEvents(ClaimManager.INSTANCE, E2UClaim.INSTANCE);
+
         FileConfiguration claims = E2UClaim.getConfig("claims");
 
         switch (claims.getInt("configVersion", 1)) {
@@ -242,7 +244,7 @@ public enum ClaimManager implements Listener, Initializable, Terminatable {
     }
 
     @Override
-    public void terminate() {
+    public void close() {
         int stored = 0;
         FileConfiguration claims = E2UClaim.getConfig("claims");
         claims.set("configVersion", 1);
