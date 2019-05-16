@@ -40,6 +40,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import static de.kaleidox.e2uClaim.E2UClaim.LOGGER;
 import static de.kaleidox.e2uClaim.chat.Chat.message;
 import static de.kaleidox.e2uClaim.util.ConfigurationUtil.getConfigSection;
+import static de.kaleidox.e2uClaim.util.WorldUtil.isExcludedWorld;
 import static de.kaleidox.e2uClaim.util.WorldUtil.xyz;
 
 public enum ClaimManager implements Listener, Initializable, Closeable {
@@ -87,6 +88,7 @@ public enum ClaimManager implements Listener, Initializable, Closeable {
         Player player = event.getPlayer();
         World world = player.getWorld();
         if (world.getName().equals("configVersion")) return;
+        if (isExcludedWorld(player)) return;
 
         Block targetBlock = event.getClickedBlock();
         if (targetBlock == null) return;
@@ -191,6 +193,7 @@ public enum ClaimManager implements Listener, Initializable, Closeable {
     public void onBlockPlace(BlockPlaceEvent event) {
         if (E2UClaim.Permission.OVERRIDE_CLAIM.check(event.getPlayer())) return;
         if (event.getBlock().getWorld().getName().equals("configVersion")) return;
+        if (isExcludedWorld(event.getPlayer())) return;
         final int[] xyz = xyz(event.getBlock().getLocation());
 
         protecc(event.getPlayer(), xyz, event);
@@ -200,6 +203,7 @@ public enum ClaimManager implements Listener, Initializable, Closeable {
     public void onBlockBreak(BlockBreakEvent event) {
         if (E2UClaim.Permission.OVERRIDE_CLAIM.check(event.getPlayer())) return;
         if (event.getBlock().getWorld().getName().equals("configVersion")) return;
+        if (isExcludedWorld(event.getPlayer())) return;
         final int[] xyz = xyz(event.getBlock().getLocation());
 
         protecc(event.getPlayer(), xyz, event);

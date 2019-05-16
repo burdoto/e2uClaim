@@ -14,6 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import de.kaleidox.e2uClaim.chat.Chat;
 import de.kaleidox.e2uClaim.chat.MessageType;
@@ -23,6 +24,7 @@ import de.kaleidox.e2uClaim.exception.PluginEnableException;
 import de.kaleidox.e2uClaim.interfaces.Initializable;
 import de.kaleidox.e2uClaim.lock.LockManager;
 import de.kaleidox.e2uClaim.util.BukkitUtil;
+import de.kaleidox.e2uClaim.util.WorldUtil;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -80,10 +82,16 @@ public final class E2UClaim extends JavaPlugin {
             @NotNull String[] args
     ) {
         Optional<Player> playerOptional = BukkitUtil.getPlayer(sender);
+
         if (playerOptional.map(Entity::getWorld)
                 .map(World::getName)
                 .map("configVersion"::equals)
                 .orElse(false)) return false;
+        if (playerOptional.map(WorldUtil::isExcludedWorld)
+                .orElse(false)) {
+            Chat.message(sender, MessageType.WARN, "You are in an excluded world!");
+            return false;
+        }
 
         switch (label.toLowerCase()) {
             case "e2uclaim":
@@ -136,6 +144,8 @@ public final class E2UClaim extends JavaPlugin {
         FileConfiguration config = getConfig("config");
         if (!config.isSet("defaults.claim-size"))
             config.set("defaults.claim-size", 128);
+        if (!config.isSet("excluded-worlds"))
+            config.set("excluded-worlds", new ArrayList<>());
         cycle();
 
         saveDefaultConfig();
@@ -194,6 +204,18 @@ public final class E2UClaim extends JavaPlugin {
                     LOGGER.severe("Error initializing " + initializable.toString() + ": " + e.getMessage());
                 }
             }
+
+            String excluded = getConfig("config")
+                    .getStringList("excluded-worlds")
+                    .stream()
+                    .map(str -> {
+                        if (Bukkit.getWorld(str) == null)
+                            return str + " [invalid world name]";
+                        return str;
+                    })
+                    .collect(Collectors.joining(", "));
+            if (!excluded.isEmpty())
+                LOGGER.info("Excluded worlds: " + excluded);
 
             ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
             scheduler.scheduleAtFixedRate(this::cycle, 5, 5, TimeUnit.MINUTES);
@@ -274,6 +296,15 @@ public final class E2UClaim extends JavaPlugin {
         }
 
         public boolean check(CommandSender user) {
+            if (user.hasPermission(node)) return true;
+            if (customMissingMessage == null)
+                Chat.message(user, MessageType.ERROR, "You are missing the required permission: %s", node);
+            else if (customMissingMessage.isEmpty()) return false;
+            else Chat.message(user, MessageType.ERROR, customMissingMessage);
+            return false;
+        }
+
+        public boolean check(CommandSender user, String customMissingMessage) {
             if (user.hasPermission(node)) return true;
             if (customMissingMessage == null)
                 Chat.message(user, MessageType.ERROR, "You are missing the required permission: %s", node);

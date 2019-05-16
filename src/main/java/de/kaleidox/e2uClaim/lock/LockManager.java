@@ -37,6 +37,7 @@ import static de.kaleidox.e2uClaim.E2UClaim.LOGGER;
 import static de.kaleidox.e2uClaim.chat.Chat.message;
 import static de.kaleidox.e2uClaim.util.ConfigurationUtil.getConfigSection;
 import static de.kaleidox.e2uClaim.util.WorldUtil.breakDependent;
+import static de.kaleidox.e2uClaim.util.WorldUtil.isExcludedWorld;
 import static de.kaleidox.e2uClaim.util.WorldUtil.xyz;
 
 public enum LockManager implements Listener, Initializable, Closeable {
@@ -67,6 +68,12 @@ public enum LockManager implements Listener, Initializable, Closeable {
         WallSign sign = (WallSign) signBlock.getBlockData();
         Sign signState = (Sign) signBlock.getState();
         int[] target;
+
+        if (isExcludedWorld(player)) {
+            breakDependent(player, signBlock);
+            message(player, MessageType.WARN, "You are in an excluded world!");
+            return;
+        }
 
         switch (sign.getFacing()) {
             case NORTH:
@@ -119,6 +126,7 @@ public enum LockManager implements Listener, Initializable, Closeable {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerInteractEvent(PlayerInteractEvent event) {
         if (event.getPlayer().getWorld().getName().equals("configVersion")) return;
+        if (isExcludedWorld(event.getPlayer())) return;
 
         Block targetBlock = event.getClickedBlock();
         if (targetBlock == null) return;
@@ -154,6 +162,7 @@ public enum LockManager implements Listener, Initializable, Closeable {
                 LOGGER.warning("Suspicious unlock action: More than 1 lock found!");
             if (toBeRemoved.size() == 0) {
                 message(player, MessageType.ERROR, "There is no lock at %s!", Arrays.toString(xyz));
+                event.setCancelled(true);
                 return;
             }
             for (Lock oldLock : toBeRemoved) {
@@ -193,9 +202,11 @@ public enum LockManager implements Listener, Initializable, Closeable {
                 //.filter(Objects::nonNull)
                 .filter(lock -> !lock.canAccess(event.getPlayer())) //only failing locks
                 .forEach(failedLock -> {
+                    if (isExcludedWorld(event.getPlayer())) return;
                     event.setCancelled(true);
                     message(event.getPlayer(), MessageType.WARN, "You cannot access this block!");
                 });
+        // FIXME: 16.05.2019 Remove broken locks in excluded worlds
         removeLocks.forEach(lock -> {
             if (locks.remove(lock))
                 message(event.getPlayer(), MessageType.INFO, "Removed lock from block %s at %s.",

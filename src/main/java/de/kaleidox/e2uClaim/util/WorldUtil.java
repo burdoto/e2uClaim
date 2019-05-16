@@ -1,5 +1,7 @@
 package de.kaleidox.e2uClaim.util;
 
+import de.kaleidox.e2uClaim.E2UClaim;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -96,6 +98,14 @@ public final class WorldUtil {
             return ChestState.SIMPLE_CHEST;
         }
         return ChestState.NO_CHEST;
+    }
+
+    public static boolean isExcludedWorld(Player player) {
+        if (E2UClaim.Permission.ADMIN.check(player, ""))
+            return false;
+        return E2UClaim.getConfig("config")
+                .getStringList("excluded-worlds")
+                .contains(player.getWorld().getName());
     }
 
     public final class ChestState {
