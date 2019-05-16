@@ -90,16 +90,16 @@ public final class E2UClaim extends JavaPlugin {
                 return SystemCommand.INSTANCE.execute(sender, args);
             case "lock":
                 playerOptional.ifPresent(LockManager.INSTANCE::requestLock);
-                break;
+                return true;
             case "unlock":
                 playerOptional.ifPresent(LockManager.INSTANCE::requestUnlock);
-                break;
+                return true;
             case "claim":
                 playerOptional.ifPresent(ClaimManager.INSTANCE::requestClaiming);
-                break;
+                return true;
             case "unclaim":
                 playerOptional.ifPresent(ClaimManager.INSTANCE::requestUnclaiming);
-                break;
+                return true;
         }
 
         return super.onCommand(sender, command, label, args);
