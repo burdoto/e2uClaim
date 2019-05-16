@@ -152,6 +152,10 @@ public enum LockManager implements Listener, Initializable, Closeable {
                     .collect(Collectors.toList());
             if (toBeRemoved.size() > 1)
                 LOGGER.warning("Suspicious unlock action: More than 1 lock found!");
+            if (toBeRemoved.size() == 0) {
+                message(player, MessageType.ERROR, "There is no lock at %s!", Arrays.toString(xyz));
+                return;
+            }
             for (Lock oldLock : toBeRemoved) {
                 if (locks.remove(oldLock)) {
                     oldLock.getOrigin()
