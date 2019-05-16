@@ -133,13 +133,13 @@ public final class E2UClaim extends JavaPlugin {
 
         super.onLoad();
 
-        FileConfiguration config = getConfig();
+        FileConfiguration config = getConfig("config");
         if (!config.isSet("defaults.claim-size"))
             config.set("defaults.claim-size", 128);
-        saveConfig();
+        cycle();
 
         saveDefaultConfig();
-        configs.put("config", getConfig());
+        configs.put("config", getConfig("config"));
     }
 
     @Override
