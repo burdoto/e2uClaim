@@ -1,6 +1,7 @@
 package de.kaleidox.e2uClaim.util;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -9,7 +10,6 @@ import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.Contract;
 
@@ -74,7 +74,7 @@ public final class WorldUtil {
         switch (player.getGameMode()) {
             case CREATIVE:
             case SPECTATOR:
-                block.breakNaturally(new ItemStack(block.getType(), 0));
+                block.setType(Material.AIR);
                 break;
             case SURVIVAL:
             case ADVENTURE:
