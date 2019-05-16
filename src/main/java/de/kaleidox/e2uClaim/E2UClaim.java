@@ -3,6 +3,7 @@ package de.kaleidox.e2uClaim;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -24,6 +25,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.plugin.Plugin;
@@ -46,22 +48,24 @@ public final class E2UClaim extends JavaPlugin {
             @NotNull String label,
             @NotNull String[] args
     ) {
-        Player player = BukkitUtil.getPlayer(sender);
-
-        if (player.getWorld().getName().equals("configVersion")) return true;
+        Optional<Player> playerOptional = BukkitUtil.getPlayer(sender);
+        if (playerOptional.map(Entity::getWorld)
+                .map(World::getName)
+                .map("configVersion"::equals)
+                .orElse(false)) return false;
 
         switch (label.toLowerCase()) {
             case "lock":
-                LockManager.INSTANCE.requestLock(player);
+                playerOptional.ifPresent(LockManager.INSTANCE::requestLock);
                 break;
             case "unlock":
-                LockManager.INSTANCE.requestUnlock(player);
+                playerOptional.ifPresent(LockManager.INSTANCE::requestUnlock);
                 break;
             case "claim":
-                ClaimManager.INSTANCE.requestClaiming(player);
+                playerOptional.ifPresent(ClaimManager.INSTANCE::requestClaiming);
                 break;
             case "unclaim":
-                ClaimManager.INSTANCE.requestUnclaiming(player);
+                playerOptional.ifPresent(ClaimManager.INSTANCE::requestUnclaiming);
                 break;
         }
 
@@ -177,6 +181,8 @@ public final class E2UClaim extends JavaPlugin {
         OVERRIDE_LOCK("e2uclaim.mod.lock", ""),
         CREATE_CLAIM("e2uclaim.claim", "You are not allowed to create claims!"),
         OVERRIDE_CLAIM("e2uclaim.mod.claim", ""),
+
+        ADMIN("e2uclaim.admin"),
 
         // Numeric Permissions prefix
         CLAIM_SIZE("e2uclaim.claim.size.", "");

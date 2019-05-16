@@ -1,8 +1,5 @@
 package de.kaleidox.e2uClaim.chat;
 
-
-import de.kaleidox.e2uClaim.util.BukkitUtil;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -13,7 +10,8 @@ public final class Chat {
     }
 
     public static void message(CommandSender sender, MessageType msgLevel, String format, Object... vars) {
-        message(BukkitUtil.getPlayer(sender), msgLevel, format, vars);
+        sender.sendMessage(prefix() + msgLevel.chatColor
+                + String.format(format, (Object[]) formatStrings(msgLevel, vars)));
     }
 
     public static void message(Player player, MessageType msgLevel, String format, Object... vars) {

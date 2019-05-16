@@ -25,12 +25,15 @@ public final class BukkitUtil {
         throw new AssertionError("Sender is not online!");
     }
 
-    public static Player getPlayer(CommandSender cmdSender) {
+    public static Optional<Player> getPlayer(CommandSender cmdSender) {
+        if (cmdSender instanceof Player) return Optional.of((Player) cmdSender);
+
         for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
             if (onlinePlayer.getName().equals(cmdSender.getName()))
-                return onlinePlayer;
+                return Optional.of(onlinePlayer);
         }
-        throw new AssertionError("Sender is not online!");
+
+        return Optional.empty();
     }
 
     public static Optional<Material> getMaterial(@Nullable String name) {
