@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import de.kaleidox.e2uClaim.chat.Chat;
 import de.kaleidox.e2uClaim.chat.MessageType;
 import de.kaleidox.e2uClaim.claim.ClaimManager;
+import de.kaleidox.e2uClaim.command.ClaimCommand;
 import de.kaleidox.e2uClaim.command.SystemCommand;
 import de.kaleidox.e2uClaim.exception.PluginEnableException;
 import de.kaleidox.e2uClaim.interfaces.Initializable;
@@ -104,7 +105,8 @@ public final class E2UClaim extends JavaPlugin {
                 playerOptional.ifPresent(LockManager.INSTANCE::requestUnlock);
                 return true;
             case "claim":
-                playerOptional.ifPresent(ClaimManager.INSTANCE::requestClaiming);
+                if (args.length > 0) ClaimCommand.INSTANCE.execute(sender, args);
+                else playerOptional.ifPresent(ClaimManager.INSTANCE::requestClaiming);
                 return true;
             case "unclaim":
                 playerOptional.ifPresent(ClaimManager.INSTANCE::requestUnclaiming);
@@ -127,6 +129,9 @@ public final class E2UClaim extends JavaPlugin {
             case "e2uclaim":
             case "e2uc":
                 SystemCommand.INSTANCE.tabComplete(sender, alias, args, yields);
+                break;
+            case "claim":
+                ClaimCommand.INSTANCE.tabComplete(sender, alias, args, yields);
                 break;
         }
 

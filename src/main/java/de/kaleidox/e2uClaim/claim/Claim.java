@@ -108,6 +108,10 @@ public class Claim implements WorldLockable {
                 ((min_z1 <= min_z2 && min_z2 <= max_z1) || (min_z2 <= min_z1 && min_z1 <= max_z2));
     }
 
+    public UUID[] getMembers() {
+        return member;
+    }
+
     public static Claim load(World world, ConfigurationSection config) {
         UUID owner = UUID.fromString(Objects.requireNonNull(config.getString("owner")));
 

@@ -2,12 +2,14 @@ package de.kaleidox.e2uClaim.claim;
 
 import java.io.Closeable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -277,6 +279,22 @@ public enum ClaimManager implements Listener, Initializable, Closeable {
         }
 
         LOGGER.info("Saved " + stored + " claim" + (stored != 1 ? "s" : "") + "!");
+    }
+
+    public void listClaims(Player player, int page) {
+        final int elementsPerPage = 5;
+
+        claims.stream()
+                .filter(claim -> claim.getOwner().equals(player.getUniqueId()))
+                .skip(elementsPerPage * page)
+                .limit(elementsPerPage)
+                .forEachOrdered(claim -> {
+                    int[][] area = claim.getArea();
+                    UUID[] members = claim.getMembers();
+                    message(player, MessageType.INFO, "Area: %s -> %s in %s; %s member"
+                                    + (members.length == 1 ? "" : "s"), Arrays.toString(area[0]),
+                            Arrays.toString(area[1]), claim.getWorld().getName(), members.length);
+                });
     }
 
     private void protecc(Player player, int[] xyz, Cancellable event) {
