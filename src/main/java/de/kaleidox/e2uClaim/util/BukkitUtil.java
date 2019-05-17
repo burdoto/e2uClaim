@@ -53,6 +53,8 @@ public final class BukkitUtil {
             Permissible entity,
             Supplier<Integer> fallback
     ) {
+        if (entity.hasPermission(permission.node + "*"))
+            return Integer.MAX_VALUE;
         return entity.getEffectivePermissions()
                 .stream()
                 .filter(perm -> perm.getPermission().indexOf(permission.node) == 0)
