@@ -12,10 +12,6 @@ compileJava {
     options.encoding = "UTF-8"
 }
 
-jar {
-    dependsOn 'processResources'
-}
-
 processResources {
     from(sourceSets.main.resources) {
         expand project.properties
