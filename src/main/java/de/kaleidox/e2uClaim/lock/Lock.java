@@ -5,9 +5,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import de.kaleidox.e2uClaim.E2UClaim;
 import de.kaleidox.e2uClaim.interfaces.WorldLockable;
+import de.kaleidox.e2uClaim.util.BukkitUtil;
 import de.kaleidox.e2uClaim.util.WorldUtil;
 
 import org.bukkit.Material;
@@ -17,6 +19,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 public class Lock implements WorldLockable {
@@ -72,13 +75,17 @@ public class Lock implements WorldLockable {
     }
 
     @Override
-    public <T extends CommandSender & Entity> boolean canAccess(T player) {
-        return E2UClaim.Permission.LOCK_OVERRIDE.check(player) || player.getUniqueId().equals(owner);
-    }
+    public <T extends CommandSender & Entity> boolean canAccess(Player player) {
+        if (E2UClaim.Permission.LOCK_OVERRIDE.check(player))
+            return true;
 
-    @Override
-    public <T extends CommandSender & Entity> boolean tryAccess(T player, String pass) {
-        return canAccess(player) && config.checkPassword(pass);
+        if (player.getUniqueId().equals(owner) || !config.getPassword().isPresent())
+            return true;
+
+        // has password & is foreign player
+        return BukkitUtil.inputFromPlayer("Please enter password", player)
+                .thenApply(config::checkPassword)
+                .join();
     }
 
     @Override

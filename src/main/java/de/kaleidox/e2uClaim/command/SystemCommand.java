@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.kaleidox.e2uClaim.E2UClaim;
+import de.kaleidox.e2uClaim.chat.Chat;
 import de.kaleidox.e2uClaim.chat.MessageType;
+import de.kaleidox.e2uClaim.util.BukkitUtil;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -30,6 +32,12 @@ public enum SystemCommand implements Subcommand {
                     case "reload":
                     case "rl":
                         E2UClaim.INSTANCE.reloadConfig();
+                        return true;
+                    case "test":
+                        BukkitUtil.getPlayer(sender)
+                                .map(player -> BukkitUtil.inputFromPlayer("test input", player))
+                                .get()
+                                .thenAccept(str -> Chat.message(sender, MessageType.INFO, "Input: %s", str));
                         return true;
                 }
             case 2:

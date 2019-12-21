@@ -13,6 +13,7 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import static de.kaleidox.e2uClaim.util.WorldUtil.sort;
@@ -72,7 +73,7 @@ public class Claim implements WorldLockable {
     }
 
     @Override
-    public <T extends CommandSender & Entity> boolean canAccess(T player) {
+    public <T extends CommandSender & Entity> boolean canAccess(Player player) {
         if (E2UClaim.Permission.CLAIM_OVERRIDE.check(player)) return true;
 
         if (player.getUniqueId().equals(owner)) return true;
