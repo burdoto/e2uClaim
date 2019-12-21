@@ -12,7 +12,7 @@ compileJava {
     options.encoding = "UTF-8"
 }
 
-task pluginJarForTesting(type: Jar) {
+task pluginJarForTesting(type: Jar, dependsOn: 'jar') {
     from sourceSets.main.java.outputDir
     from('src/main/resources')
     destinationDir = file("test/plugins/")
