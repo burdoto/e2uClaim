@@ -254,7 +254,7 @@ public final class E2UClaim extends JavaPlugin {
                 configuration.load(file); // load the configuration
                 return configuration; // place the configuration inside the map at the key
             } catch (IOException | InvalidConfigurationException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("Configuration: " + name, e);
             }
         });
     }
