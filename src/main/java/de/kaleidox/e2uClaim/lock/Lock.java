@@ -5,15 +5,18 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import de.kaleidox.e2uClaim.E2UClaim;
 import de.kaleidox.e2uClaim.interfaces.WorldLockable;
 import de.kaleidox.e2uClaim.util.WorldUtil;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.Chest;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
@@ -42,6 +45,13 @@ public class Lock implements WorldLockable {
             E2UClaim.LOGGER.warning("Suspicious lock loaded: No targets defined");
         if (targets.length > 0 && (targets[0][0] == 0 && targets[0][1] == 0 && targets[0][2] == 0))
             E2UClaim.LOGGER.warning("Suspicious lock loaded: target[0] is " + Arrays.toString(targets[0]));
+
+        Stream.of(targets)
+                .map(pos -> WorldUtil.location(this.world, pos))
+                .map(Location::getBlock)
+                .filter(block -> WorldUtil.chestState(block) != WorldUtil.ChestState.NO_CHEST)
+                .map(block -> ((Chest) block).get())
+                .forEachOrdered(chestData -> chestData.);
     }
 
     public World getWorld() {

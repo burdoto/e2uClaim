@@ -1,5 +1,7 @@
 package de.kaleidox.e2uClaim.util;
 
+import java.lang.reflect.Field;
+
 import de.kaleidox.e2uClaim.E2UClaim;
 
 import org.bukkit.Location;
@@ -49,6 +51,23 @@ public final class WorldUtil {
 
     public static Location location(World world, int[] xyz) {
         return world.getBlockAt(xyz[0], xyz[1], xyz[2]).getLocation();
+    }
+
+    public static void chestName(Location loc, String name)
+    {
+        try
+        {
+            loc.getBlock().setType(Material.CHEST);
+
+            Field inventoryField = CraftChest.class.getDeclaredField("chest");
+            inventoryField.setAccessible(true);
+            TileEnE teChest = ((TileEntityChest) inventoryField.get((CraftChest)                           loc.getBlock().getState()));
+            teChest.a(name);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Contract(mutates = "param1")
