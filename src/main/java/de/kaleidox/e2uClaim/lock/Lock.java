@@ -24,6 +24,7 @@ public class Lock implements WorldLockable {
     private final UUID owner;
     private final int[][] targets;
     private @Nullable final int[] origin;
+    private LockConfiguration config;
 
     public Lock(World world, UUID owner, int[] target, @Nullable int[] origin) {
         this(world, owner, processTarget(world, target), origin);
@@ -73,6 +74,11 @@ public class Lock implements WorldLockable {
     @Override
     public <T extends CommandSender & Entity> boolean canAccess(T player) {
         return E2UClaim.Permission.LOCK_OVERRIDE.check(player) || player.getUniqueId().equals(owner);
+    }
+
+    @Override
+    public <T extends CommandSender & Entity> boolean tryAccess(T player, String pass) {
+        return canAccess(player) && config.checkPassword(pass);
     }
 
     @Override
