@@ -7,8 +7,6 @@ import de.kaleidox.e2uClaim.E2UClaim;
 import de.kaleidox.e2uClaim.claim.ClaimManager;
 import de.kaleidox.e2uClaim.util.BukkitUtil;
 
-import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -51,14 +49,12 @@ public enum ClaimCommand implements Subcommand {
         switch (args.length) {
             case 0:
             case 1:
-                list.add("reload");
-                list.add("exclude");
+                list.add("list");
                 break;
             case 2:
                 switch (args[0].toLowerCase()) {
-                    case "exclude":
-                        for (World world : Bukkit.getWorlds()) list.add(world.getName());
-                        list.addAll(E2UClaim.getConfig("config").getStringList("excluded-worlds"));
+                    case "list":
+                        list.add("<int>");
                         break;
                 }
                 break;
