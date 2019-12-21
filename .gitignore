@@ -24,6 +24,12 @@ gradle-app.setting
 ### Gradle Patch ###
 **/build/
 
+# Test Server Environment
 test/
+test/spigot**.jar
+test/minecraft**.jar
+test/plugins/**
+test/eula.txt
+test/server.properties
 
 # End of https://www.gitignore.io/api/gradle,intellij
