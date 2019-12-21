@@ -11,20 +11,20 @@ commands:
       - e2uc
     description: e2uClaim configuration command
     permission: e2uclaim.admin
-    permission-message: "§7[§ae2uClaim§7] §cYou are missing permission!"
+    permission-message: "§7[§ae2uClaim§7] §cYou are missing the permission: §be2uclaim.admin§c!"
   lock:
     description: Locks a block
     permission: e2uclaim.lock
-    permission-message: "§7[§ae2uClaim§7] §cYou are missing permission!"
+    permission-message: "§7[§ae2uClaim§7] §cYou are missing the permission: §be2uclaim.lock§c!"
   unlock:
     description: Unlocks a block
     permission: e2uclaim.lock
-    permission-message: "§7[§ae2uClaim§7] §cYou are missing permission!"
+    permission-message: "§7[§ae2uClaim§7] §cYou are missing the permission: §be2uclaim.lock§c!"
   claim:
     description: Claim an area for yourself
     permission: e2uclaim.claim
-    permission-message: "§7[§ae2uClaim§7] §cYou are missing permission!"
+    permission-message: "§7[§ae2uClaim§7] §cYou are missing the permission: §be2uclaim.claim§c!"
   unclaim:
     description: Unclaim an area you have claimed before
     permission: e2uclaim.claim
-    permission-message: "§7[§ae2uClaim§7] §cYou are missing permission!"
+    permission-message: "§7[§ae2uClaim§7] §cYou are missing the permission: §be2uclaim.claim§c!"
