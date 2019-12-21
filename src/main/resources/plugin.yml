@@ -1,6 +1,6 @@
 main: de.kaleidox.e2uClaim.E2UClaim
 name: e2uClaim
-version: 0.2.0
+version: ${version}
 author: Kaleidox
 description: easy-to-use claiming plugin
 api-version: "1.14"

@@ -12,10 +12,26 @@ compileJava {
     options.encoding = "UTF-8"
 }
 
-task pluginJarForTesting(type: Jar, dependsOn: 'jar') {
-    from sourceSets.main.java.outputDir
-    from('src/main/resources')
-    destinationDir = file("test/plugins/")
+jar {
+    dependsOn 'processResources'
+}
+
+processResources {
+    from(sourceSets.main.resources) {
+        expand project.properties
+    }
+}
+
+task testPlugin(type: Copy, dependsOn: ['deleteTestPlugin', 'jar']) {
+    from tasks.findByName('jar').outputs.files.singleFile
+    into file("test/plugins/")
+    rename { String filename ->
+        return filename.contains('e2uClaim') ? 'e2uClaim.jar' : filename;
+    }
+}
+
+task deleteTestPlugin(type: Delete) {
+    delete 'test/plugins/e2uClaim.jar'
 }
 
 dependencies {
