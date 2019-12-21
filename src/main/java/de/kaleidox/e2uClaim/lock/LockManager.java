@@ -144,6 +144,7 @@ public enum LockManager implements Listener, Initializable, Closeable {
                         targetBlock.getType(), Arrays.toString(newLock.getMainTarget()));
                 event.setCancelled(true);
                 if (WorldUtil.chestState(targetBlock) == WorldUtil.ChestState.DOUBLE_CHEST)
+                    // todo Create chest multiblock locking
                     message(player, MessageType.WARN, "Warning: Multiblock-Chest locking is currently not" +
                             " supported. Please lock both sides of the chest seperately.");
             } else {
