@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import de.kaleidox.e2uClaim.E2UClaim;
 import de.kaleidox.e2uClaim.interfaces.WorldLockable;
+import de.kaleidox.e2uClaim.util.ConfigurationUtil;
 import de.kaleidox.e2uClaim.util.WorldUtil;
 
 import org.bukkit.World;
@@ -21,6 +22,7 @@ public class Claim implements WorldLockable {
     private final World world;
     private final UUID owner;
     private final int[][] area;
+    private final ClaimConfiguration config;
     // unused
     private @Nullable final int[] origin;
     private UUID[] member;
@@ -45,6 +47,9 @@ public class Claim implements WorldLockable {
         List<String> members = config.getStringList("members");
         for (UUID uuid : member) members.add(uuid.toString());
         config.set("members", members);
+
+        final ConfigurationSection etc = ConfigurationUtil.getConfigSection(config, "etc");
+        this.config.serializeToSection(etc);
 
         config.set("pos1.x", area[0][0]);
         config.set("pos1.y", area[0][1]);
@@ -78,6 +83,11 @@ public class Claim implements WorldLockable {
         if (player.getUniqueId().equals(owner)) return true;
         for (UUID me : member) if (player.getUniqueId().equals(me)) return true;
 
+        return false;
+    }
+
+    @Override
+    public <T extends CommandSender & Entity> boolean tryAccess(T player, String pass) {
         return false;
     }
 
