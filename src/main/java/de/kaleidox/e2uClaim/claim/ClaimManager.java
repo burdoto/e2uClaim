@@ -182,7 +182,7 @@ public enum ClaimManager implements Listener, Initializable, Closeable {
         } else {
             // protecc
             BlockFace face = event.getBlockFace();
-            if (!E2UClaim.Permission.OVERRIDE_CLAIM.check(player))
+            if (!E2UClaim.Permission.CLAIM_OVERRIDE.check(player))
                 protecc(event.getPlayer(), new int[]{
                         xyz[0] + face.getModX(),
                         xyz[1] + face.getModY(),
@@ -193,7 +193,7 @@ public enum ClaimManager implements Listener, Initializable, Closeable {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
-        if (E2UClaim.Permission.OVERRIDE_CLAIM.check(event.getPlayer())) return;
+        if (E2UClaim.Permission.CLAIM_OVERRIDE.check(event.getPlayer())) return;
         if (event.getBlock().getWorld().getName().equals("configVersion")) return;
         if (isExcludedWorld(event.getPlayer())) return;
         final int[] xyz = xyz(event.getBlock().getLocation());
@@ -203,7 +203,7 @@ public enum ClaimManager implements Listener, Initializable, Closeable {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        if (E2UClaim.Permission.OVERRIDE_CLAIM.check(event.getPlayer())) return;
+        if (E2UClaim.Permission.CLAIM_OVERRIDE.check(event.getPlayer())) return;
         if (event.getBlock().getWorld().getName().equals("configVersion")) return;
         if (isExcludedWorld(event.getPlayer())) return;
         final int[] xyz = xyz(event.getBlock().getLocation());

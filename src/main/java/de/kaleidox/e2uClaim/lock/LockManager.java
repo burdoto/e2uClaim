@@ -52,7 +52,7 @@ public enum LockManager implements Listener, Initializable, Closeable {
         if (event.getBlock().getWorld().getName().equals("configVersion")) return;
         String[] lines = event.getLines();
         if (lines[0] != null && !lines[0].equalsIgnoreCase("[lock]")) return;
-        if (!E2UClaim.Permission.CREATE_LOCK.check(event.getPlayer())) {
+        if (!E2UClaim.Permission.LOCK_USE.check(event.getPlayer())) {
             breakDependent(event.getPlayer(), event.getBlock());
             return;
         }

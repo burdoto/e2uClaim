@@ -73,7 +73,7 @@ public class Claim implements WorldLockable {
 
     @Override
     public <T extends CommandSender & Entity> boolean canAccess(T player) {
-        if (E2UClaim.Permission.OVERRIDE_CLAIM.check(player)) return true;
+        if (E2UClaim.Permission.CLAIM_OVERRIDE.check(player)) return true;
 
         if (player.getUniqueId().equals(owner)) return true;
         for (UUID me : member) if (player.getUniqueId().equals(me)) return true;

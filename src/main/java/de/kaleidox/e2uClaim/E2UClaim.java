@@ -128,10 +128,10 @@ public final class E2UClaim extends JavaPlugin {
         switch (alias.toLowerCase()) {
             case "e2uclaim":
             case "e2uc":
-                SystemCommand.INSTANCE.tabComplete(sender, alias, args, yields);
+                SystemCommand.INSTANCE.populateTabCompletion(sender, alias, args, yields);
                 break;
             case "claim":
-                ClaimCommand.INSTANCE.tabComplete(sender, alias, args, yields);
+                ClaimCommand.INSTANCE.populateTabCompletion(sender, alias, args, yields);
                 break;
         }
 
@@ -283,10 +283,10 @@ public final class E2UClaim extends JavaPlugin {
 
     public enum Permission {
         // Usage Permissions
-        CREATE_LOCK("e2uclaim.lock", "You are not allowed to create locks!"),
-        OVERRIDE_LOCK("e2uclaim.mod.lock", ""),
-        CREATE_CLAIM("e2uclaim.claim", "You are not allowed to create claims!"),
-        OVERRIDE_CLAIM("e2uclaim.mod.claim", ""),
+        LOCK_USE("e2uclaim.lock", "You are not allowed to create locks!"),
+        LOCK_OVERRIDE("e2uclaim.mod.lock", ""),
+        CLAIM_USE("e2uclaim.claim", "You are not allowed to create claims!"),
+        CLAIM_OVERRIDE("e2uclaim.mod.claim", ""),
 
         ADMIN("e2uclaim.admin"),
 

@@ -3,9 +3,12 @@ package de.kaleidox.e2uClaim.command;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import de.kaleidox.e2uClaim.E2UClaim;
 import de.kaleidox.e2uClaim.claim.ClaimManager;
 import de.kaleidox.e2uClaim.util.BukkitUtil;
 
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -42,7 +45,23 @@ public enum ClaimCommand implements Subcommand {
     }
 
     @Override
-    public void tabComplete(CommandSender sender, String alias, String[] args, ArrayList<String> list) {
+    public void populateTabCompletion(CommandSender sender, String alias, String[] args, ArrayList<String> list) {
+        if (!E2UClaim.Permission.CLAIM_USE.check(sender, "")) return;
 
+        switch (args.length) {
+            case 0:
+            case 1:
+                list.add("reload");
+                list.add("exclude");
+                break;
+            case 2:
+                switch (args[0].toLowerCase()) {
+                    case "exclude":
+                        for (World world : Bukkit.getWorlds()) list.add(world.getName());
+                        list.addAll(E2UClaim.getConfig("config").getStringList("excluded-worlds"));
+                        break;
+                }
+                break;
+        }
     }
 }

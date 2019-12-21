@@ -72,7 +72,7 @@ public class Lock implements WorldLockable {
 
     @Override
     public <T extends CommandSender & Entity> boolean canAccess(T player) {
-        return E2UClaim.Permission.OVERRIDE_LOCK.check(player) || player.getUniqueId().equals(owner);
+        return E2UClaim.Permission.LOCK_OVERRIDE.check(player) || player.getUniqueId().equals(owner);
     }
 
     @Override

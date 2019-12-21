@@ -9,5 +9,5 @@ public interface Subcommand {
     boolean execute(CommandSender sender, String[] args);
 
     @Contract(mutates = "param4")
-    void tabComplete(CommandSender sender, String alias, String[] args, ArrayList<String> list);
+    void populateTabCompletion(CommandSender sender, String alias, String[] args, ArrayList<String> list);
 }

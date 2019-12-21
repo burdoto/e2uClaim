@@ -65,7 +65,7 @@ public enum SystemCommand implements Subcommand {
 
     @SuppressWarnings("SwitchStatementWithTooFewBranches")
     @Override
-    public void tabComplete(CommandSender sender, String alias, String[] args, ArrayList<String> list) {
+    public void populateTabCompletion(CommandSender sender, String alias, String[] args, ArrayList<String> list) {
         if (!E2UClaim.Permission.ADMIN.check(sender, "")) return;
 
         switch (args.length) {
