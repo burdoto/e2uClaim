@@ -243,6 +243,11 @@ public final class E2UClaim extends JavaPlugin {
     }
 
     public static FileConfiguration getConfig(String name) {
+        final File dir = new File(PATH_BASE);
+        if (!dir.exists())
+            if (dir.mkdir())
+                LOGGER.fine("Created configuration Directory");
+
         return configs.compute(name, (k, v) -> { // .compute will place the result of the BiFunction inside the map at the given key.
             if (v != null) return v; // if the value is already set, return it
 
