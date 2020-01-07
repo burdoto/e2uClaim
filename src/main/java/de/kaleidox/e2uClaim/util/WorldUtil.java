@@ -53,23 +53,6 @@ public final class WorldUtil {
         return world.getBlockAt(xyz[0], xyz[1], xyz[2]).getLocation();
     }
 
-    public static void chestName(Location loc, String name)
-    {
-        try
-        {
-            loc.getBlock().setType(Material.CHEST);
-
-            Field inventoryField = CraftChest.class.getDeclaredField("chest");
-            inventoryField.setAccessible(true);
-            TileEnE teChest = ((TileEntityChest) inventoryField.get((CraftChest)                           loc.getBlock().getState()));
-            teChest.a(name);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
     @Contract(mutates = "param1")
     public static int[][] expandVert(int[][] positions) {
         positions[0][1] = 0;

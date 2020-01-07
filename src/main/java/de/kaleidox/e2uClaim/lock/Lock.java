@@ -40,18 +40,14 @@ public class Lock implements WorldLockable {
         this.origin = origin;
 
         if (world == null)
-            E2UClaim.LOGGER.warning("Suspicious lock loaded: world is null");
+            E2UClaim.LOGGER.severe("Suspicious lock loaded: world is null!");
         if (targets.length == 0)
             E2UClaim.LOGGER.warning("Suspicious lock loaded: No targets defined");
         if (targets.length > 0 && (targets[0][0] == 0 && targets[0][1] == 0 && targets[0][2] == 0))
             E2UClaim.LOGGER.warning("Suspicious lock loaded: target[0] is " + Arrays.toString(targets[0]));
 
-        Stream.of(targets)
-                .map(pos -> WorldUtil.location(this.world, pos))
-                .map(Location::getBlock)
-                .filter(block -> WorldUtil.chestState(block) != WorldUtil.ChestState.NO_CHEST)
-                .map(block -> ((Chest) block).get())
-                .forEachOrdered(chestData -> chestData.);
+        if (world != null) Stream.of(targets)
+                .map(pos -> WorldUtil.location(world, pos)) // todo actually rename the chests
     }
 
     public World getWorld() {

@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import de.kaleidox.e2uClaim.adapters.world.WorldModificationAdapter;
 import de.kaleidox.e2uClaim.chat.Chat;
 import de.kaleidox.e2uClaim.chat.MessageType;
 import de.kaleidox.e2uClaim.claim.ClaimManager;
@@ -49,6 +50,7 @@ public final class E2UClaim extends JavaPlugin {
     public static E2UClaim INSTANCE;
     public static Logger LOGGER;
     public static Const CONST;
+    public static WorldModificationAdapter WORLD_MOD_ADAPTER;
     private static Map<String, FileConfiguration> configs = new ConcurrentHashMap<>();
 
     static {
@@ -195,6 +197,8 @@ public final class E2UClaim extends JavaPlugin {
                 SignChangeEvent.getHandlerList().unregister(worldGuard);
                 LOGGER.info("Disabled WorldGuard SignChangeEvent listener! Continuing enabling...");
             }
+
+            WORLD_MOD_ADAPTER = WorldModificationAdapter.getInstance();
 
             super.onEnable();
 
