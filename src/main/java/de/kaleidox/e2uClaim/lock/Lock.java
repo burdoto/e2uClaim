@@ -45,9 +45,6 @@ public class Lock implements WorldLockable {
             E2UClaim.LOGGER.warning("Suspicious lock loaded: No targets defined");
         if (targets.length > 0 && (targets[0][0] == 0 && targets[0][1] == 0 && targets[0][2] == 0))
             E2UClaim.LOGGER.warning("Suspicious lock loaded: target[0] is " + Arrays.toString(targets[0]));
-
-        if (world != null) Stream.of(targets)
-                .map(pos -> WorldUtil.location(world, pos)) // todo actually rename the chests
     }
 
     public World getWorld() {

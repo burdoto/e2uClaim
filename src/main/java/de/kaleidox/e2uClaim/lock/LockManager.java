@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import de.kaleidox.e2uClaim.E2UClaim;
 import de.kaleidox.e2uClaim.chat.Chat;
@@ -37,6 +38,7 @@ import static de.kaleidox.e2uClaim.E2UClaim.LOGGER;
 import static de.kaleidox.e2uClaim.chat.Chat.message;
 import static de.kaleidox.e2uClaim.util.ConfigurationUtil.getConfigSection;
 import static de.kaleidox.e2uClaim.util.WorldUtil.breakDependent;
+import static de.kaleidox.e2uClaim.util.WorldUtil.chestState;
 import static de.kaleidox.e2uClaim.util.WorldUtil.isExcludedWorld;
 import static de.kaleidox.e2uClaim.util.WorldUtil.xyz;
 
@@ -104,6 +106,10 @@ public enum LockManager implements Listener, Initializable, Closeable {
         event.setLine(0, "§8[§3Lock§8]");
         message(player, MessageType.INFO, "Lock created for %s at %s.",
                 targetBlock.getType(), Arrays.toString(target));
+        Stream.of(lock.getAllMembers())
+                .map(pos -> WorldUtil.location(lock.getWorld(), pos))
+                .filter(loc -> chestState(loc.getBlock()) != WorldUtil.ChestState.NO_CHEST)
+                .forEach(loc -> E2UClaim.WORLD_MOD_ADAPTER.setChestDisplayName(player, loc, "Chest of " + player.getName()));
         if (WorldUtil.chestState(targetBlock) == WorldUtil.ChestState.DOUBLE_CHEST)
             message(player, MessageType.WARN, "Warning: Multiblock-Chest locking is currently not supported." +
                     " Please lock both sides of the chest with one sign each.");
@@ -143,6 +149,10 @@ public enum LockManager implements Listener, Initializable, Closeable {
                 message(player, MessageType.INFO, "Lock created for %s at %s.",
                         targetBlock.getType(), Arrays.toString(newLock.getMainTarget()));
                 event.setCancelled(true);
+                Stream.of(newLock.getAllMembers())
+                        .map(pos -> WorldUtil.location(newLock.getWorld(), pos))
+                        .filter(loc -> chestState(loc.getBlock()) != WorldUtil.ChestState.NO_CHEST)
+                        .forEach(loc -> E2UClaim.WORLD_MOD_ADAPTER.setChestDisplayName(player, loc, "Chest of " + player.getName()));
                 if (WorldUtil.chestState(targetBlock) == WorldUtil.ChestState.DOUBLE_CHEST)
                     // todo Create chest multiblock locking
                     message(player, MessageType.WARN, "Warning: Multiblock-Chest locking is currently not" +
