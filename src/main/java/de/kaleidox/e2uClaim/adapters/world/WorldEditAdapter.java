@@ -6,10 +6,12 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import de.kaleidox.e2uClaim.E2UClaim;
 import de.kaleidox.e2uClaim.adapters.CommandSendingAdapter;
 import de.kaleidox.e2uClaim.util.WorldUtil;
 
 import com.sk89q.jnbt.CompoundTag;
+import com.sk89q.jnbt.CompoundTagBuilder;
 import com.sk89q.jnbt.Tag;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEditException;
@@ -29,6 +31,8 @@ public final class WorldEditAdapter implements WorldModificationAdapter {
     protected WorldEditAdapter(WorldEditPlugin worldedit, CommandSendingAdapter fallbackAdapter) {
         this.WORLDEDIT = worldedit;
         this.fallbackAdapter = fallbackAdapter;
+
+        E2UClaim.LOGGER.info("Initialized WorldEditAdapter with " + worldedit);
     }
 
     public WorldModificationAdapter getFallbackAdapter() {
@@ -45,25 +49,25 @@ public final class WorldEditAdapter implements WorldModificationAdapter {
         final EditSession session = WORLDEDIT.createEditSession(executor);
 
         final BaseBlock block = session.getBlock(pos).toBaseBlock();
-        final CompoundTag nbt = block.getNbtData();
+        CompoundTag nbt = block.getNbtData();
 
-        if (nbt != null) {
-            nbt.setValue(new HashMap<String, Tag>(1) {{
-                put("CustomName", simpleTag(displayName));
-            }});
+        if (nbt == null) nbt = CompoundTagBuilder.create()
+                .put("CustomName", simpleTag(displayName))
+                .build();
+        else nbt.setValue(new HashMap<String, Tag>(1) {{
+            put("CustomName", simpleTag(displayName));
+        }});
 
-            block.setNbtData(nbt);
+        block.setNbtData(nbt);
 
-            try {
-                session.setBlock(pos, block, EditSession.Stage.BEFORE_CHANGE);
+        try {
+            session.setBlock(pos, block, EditSession.Stage.BEFORE_CHANGE);
 
-                session.flushSession();
-                return true;
-            } catch (WorldEditException ignored) {
-            }
+            session.flushSession();
+            return true;
+        } catch (WorldEditException ignored) {
+            return fallbackAdapter.setChestDisplayName(executor, location, displayName);
         }
-
-        return fallbackAdapter.setChestDisplayName(executor, location, displayName);
     }
 
     public static Tag simpleTag(Object value) {

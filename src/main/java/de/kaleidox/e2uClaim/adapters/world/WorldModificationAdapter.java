@@ -1,5 +1,6 @@
 package de.kaleidox.e2uClaim.adapters.world;
 
+import de.kaleidox.e2uClaim.E2UClaim;
 import de.kaleidox.e2uClaim.adapters.CommandSendingAdapter;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
@@ -19,6 +20,8 @@ public interface WorldModificationAdapter {
         Plugin worldEdit;
         if ((worldEdit = pluginManager.getPlugin("WorldEdit")) != null)
             return new WorldEditAdapter((WorldEditPlugin) worldEdit, fallbackAdapter);
+
+        E2UClaim.LOGGER.info("WorldEdit not found; using fallback WorldModificationAdapter: " + fallbackAdapter);
 
         return fallbackAdapter;
     }

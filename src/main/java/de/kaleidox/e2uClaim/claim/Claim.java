@@ -81,6 +81,10 @@ public class Claim implements WorldLockable {
         return false;
     }
 
+    @Override public <T extends CommandSender & Entity> boolean tryAccess(T player, String pass) {
+        return false; // todo
+    }
+
     @Override
     public boolean isLocked(int[] xyz) {
         return WorldUtil.inside(area, xyz);

@@ -106,10 +106,7 @@ public enum LockManager implements Listener, Initializable, Closeable {
         event.setLine(0, "§8[§3Lock§8]");
         message(player, MessageType.INFO, "Lock created for %s at %s.",
                 targetBlock.getType(), Arrays.toString(target));
-        Stream.of(lock.getAllMembers())
-                .map(pos -> WorldUtil.location(lock.getWorld(), pos))
-                .filter(loc -> chestState(loc.getBlock()) != WorldUtil.ChestState.NO_CHEST)
-                .forEach(loc -> E2UClaim.WORLD_MOD_ADAPTER.setChestDisplayName(player, loc, "Chest of " + player.getName()));
+        finalizeLock(player, lock);
         if (WorldUtil.chestState(targetBlock) == WorldUtil.ChestState.DOUBLE_CHEST)
             message(player, MessageType.WARN, "Warning: Multiblock-Chest locking is currently not supported." +
                     " Please lock both sides of the chest with one sign each.");
@@ -149,10 +146,7 @@ public enum LockManager implements Listener, Initializable, Closeable {
                 message(player, MessageType.INFO, "Lock created for %s at %s.",
                         targetBlock.getType(), Arrays.toString(newLock.getMainTarget()));
                 event.setCancelled(true);
-                Stream.of(newLock.getAllMembers())
-                        .map(pos -> WorldUtil.location(newLock.getWorld(), pos))
-                        .filter(loc -> chestState(loc.getBlock()) != WorldUtil.ChestState.NO_CHEST)
-                        .forEach(loc -> E2UClaim.WORLD_MOD_ADAPTER.setChestDisplayName(player, loc, "Chest of " + player.getName()));
+                finalizeLock(player, newLock);
                 if (WorldUtil.chestState(targetBlock) == WorldUtil.ChestState.DOUBLE_CHEST)
                     // todo Create chest multiblock locking
                     message(player, MessageType.WARN, "Warning: Multiblock-Chest locking is currently not" +
@@ -196,6 +190,16 @@ public enum LockManager implements Listener, Initializable, Closeable {
                         message(player, MessageType.WARN, "You cannot access this block!");
                     });
         }
+    }
+
+    private void finalizeLock(Player player, Lock newLock) {
+        Stream.of(newLock.getAllMembers())
+                .map(pos -> WorldUtil.location(newLock.getWorld(), pos))
+                .filter(loc -> chestState(loc.getBlock()) != WorldUtil.ChestState.NO_CHEST)
+                .forEach(loc -> {
+                    if (!E2UClaim.WORLD_MOD_ADAPTER.setChestDisplayName(player, loc, "Chest of " + player.getName()))
+                        LOGGER.warning("Could not rename chest at " + loc);
+                });
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)

@@ -1,5 +1,6 @@
 package de.kaleidox.e2uClaim.adapters;
 
+import de.kaleidox.e2uClaim.E2UClaim;
 import de.kaleidox.e2uClaim.adapters.world.WorldModificationAdapter;
 import de.kaleidox.e2uClaim.util.WorldUtil;
 
