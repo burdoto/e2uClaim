@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import de.kaleidox.e2uClaim.adapters.CommandSendingAdapter;
+import de.kaleidox.e2uClaim.util.WorldUtil;
 
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.jnbt.Tag;
@@ -36,6 +37,9 @@ public final class WorldEditAdapter implements WorldModificationAdapter {
 
     @Override
     public boolean setChestDisplayName(Player executor, Location location, String displayName) {
+        if (WorldUtil.chestState(location.getBlock()) == WorldUtil.ChestState.NO_CHEST)
+            throw new IllegalStateException("Block at " + location + " is not a chest!");
+
         final BukkitWorld world = getWorld(Objects.requireNonNull(location.getWorld(), "Invalid location!"));
         final BlockVector3 pos = loc2vec(location);
         final EditSession session = WORLDEDIT.createEditSession(executor);
