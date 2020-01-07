@@ -192,16 +192,6 @@ public enum LockManager implements Listener, Initializable, Closeable {
         }
     }
 
-    private void finalizeLock(Player player, Lock newLock) {
-        Stream.of(newLock.getAllMembers())
-                .map(pos -> WorldUtil.location(newLock.getWorld(), pos))
-                .filter(loc -> chestState(loc.getBlock()) != WorldUtil.ChestState.NO_CHEST)
-                .forEach(loc -> {
-                    if (!E2UClaim.WORLD_MOD_ADAPTER.setChestDisplayName(player, loc, "Chest of " + player.getName()))
-                        LOGGER.warning("Could not rename chest at " + loc);
-                });
-    }
-
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         if (event.getBlock().getWorld().getName().equals("configVersion")) return;
@@ -298,5 +288,15 @@ public enum LockManager implements Listener, Initializable, Closeable {
         }
 
         LOGGER.info("Saved " + stored + " lock" + (stored != 1 ? "s" : "") + "!");
+    }
+
+    private void finalizeLock(Player player, Lock newLock) {
+        Stream.of(newLock.getAllMembers())
+                .map(pos -> WorldUtil.location(newLock.getWorld(), pos))
+                .filter(loc -> chestState(loc.getBlock()) != WorldUtil.ChestState.NO_CHEST)
+                .forEach(loc -> {
+                    if (!E2UClaim.WORLD_MOD_ADAPTER.setChestDisplayName(player, loc, "Chest of " + player.getName()))
+                        LOGGER.warning("Could not rename chest at " + loc + "; using " + E2UClaim.WORLD_MOD_ADAPTER);
+                });
     }
 }
