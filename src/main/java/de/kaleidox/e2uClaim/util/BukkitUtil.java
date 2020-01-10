@@ -2,12 +2,14 @@ package de.kaleidox.e2uClaim.util;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import de.kaleidox.e2uClaim.E2UClaim;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
@@ -59,5 +61,9 @@ public final class BukkitUtil {
                 })
                 .map(Integer::parseInt)
                 .orElseGet(fallback);
+    }
+
+    public static long time2tick(int time, TimeUnit unit) {
+        return unit.toSeconds(time) * 20;
     }
 }

@@ -77,11 +77,6 @@ public class Lock implements WorldLockable {
     }
 
     @Override
-    public <T extends CommandSender & Entity> boolean tryAccess(T player, String pass) {
-        return canAccess(player) && config.checkPassword(pass);
-    }
-
-    @Override
     public boolean isLocked(int[] xyz) {
         for (int[] locked : targets)
             if (Arrays.equals(locked, xyz))
