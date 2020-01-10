@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -222,8 +220,9 @@ public final class E2UClaim extends JavaPlugin {
             if (!excluded.isEmpty())
                 LOGGER.info("Excluded worlds: " + excluded);
 
-            ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-            scheduler.scheduleAtFixedRate(this::cycle, 5, 5, TimeUnit.MINUTES);
+            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::cycle,
+                    BukkitUtil.time2tick(10, TimeUnit.SECONDS),
+                    BukkitUtil.time2tick(5, TimeUnit.MINUTES));
         } catch (PluginEnableException e) {
             LOGGER.severe("Unable to load " + toString() + ": " + e.getMessage());
             Bukkit.getPluginManager().disablePlugin(this);
@@ -231,6 +230,8 @@ public final class E2UClaim extends JavaPlugin {
     }
 
     private void cycle() {
+        LOGGER.fine("Running plugin cycle...");
+
         configs.forEach((configName, config) -> {
             try {
                 File file = new File(PATH_BASE + configName + ".yml");
