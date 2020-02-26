@@ -1,5 +1,5 @@
 main: de.kaleidox.e2uClaim.E2UClaim
-name: e2uClaim
+name: ${rootProject.name}
 version: ${version}
 author: Kaleidox
 description: easy-to-use claiming plugin
