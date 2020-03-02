@@ -33,5 +33,5 @@ task deleteTestPlugin(type: Delete) {
 dependencies {
     compileOnly fileTree("libs")
 
-    compileOnly 'org.jetbrains:annotations:17.0.0'
+    compileOnly 'org.jetbrains:annotations:19.0.0'
 }
