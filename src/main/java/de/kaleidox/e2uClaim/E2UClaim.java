@@ -1,19 +1,5 @@
 package de.kaleidox.e2uClaim;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
 import de.kaleidox.e2uClaim.chat.Chat;
 import de.kaleidox.e2uClaim.chat.MessageType;
 import de.kaleidox.e2uClaim.claim.ClaimManager;
@@ -24,7 +10,6 @@ import de.kaleidox.e2uClaim.interfaces.Initializable;
 import de.kaleidox.e2uClaim.lock.LockManager;
 import de.kaleidox.e2uClaim.util.BukkitUtil;
 import de.kaleidox.e2uClaim.util.WorldUtil;
-
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -37,9 +22,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.comroid.spiroid.api.AbstractPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public final class E2UClaim extends JavaPlugin {
     public static final String PATH_BASE = "plugins/e2uClaim/";
@@ -48,7 +42,7 @@ public final class E2UClaim extends JavaPlugin {
     public static E2UClaim INSTANCE;
     public static Logger LOGGER;
     public static Const CONST;
-    private static Map<String, FileConfiguration> configs = new ConcurrentHashMap<>();
+    private static final Map<String, FileConfiguration> configs = new ConcurrentHashMap<>();
 
     static {
         initializables = new Initializable[]{
@@ -60,6 +54,28 @@ public final class E2UClaim extends JavaPlugin {
                 ClaimManager.INSTANCE,
                 LockManager.INSTANCE
         };
+    }
+
+    public static FileConfiguration getConfig(String name) {
+        final File dir = new File(PATH_BASE);
+        if (!dir.exists())
+            if (dir.mkdir())
+                LOGGER.fine("Created configuration Directory");
+
+        return configs.compute(name, (k, v) -> { // .compute will place the result of the BiFunction inside the map at the given key.
+            if (v != null) return v; // if the value is already set, return it
+
+            try { // if there is no value; create it:
+                File file = new File(PATH_BASE + name + ".yml"); // get the file
+                file.createNewFile(); // create the file if neccessary
+
+                YamlConfiguration configuration = new YamlConfiguration(); // create the configuration
+                configuration.load(file); // load the configuration
+                return configuration; // place the configuration inside the map at the key
+            } catch (IOException | InvalidConfigurationException e) {
+                throw new RuntimeException("Configuration: " + name, e);
+            }
+        });
     }
 
     @Override
@@ -244,45 +260,6 @@ public final class E2UClaim extends JavaPlugin {
         });
     }
 
-    public static FileConfiguration getConfig(String name) {
-        final File dir = new File(PATH_BASE);
-        if (!dir.exists())
-            if (dir.mkdir())
-                LOGGER.fine("Created configuration Directory");
-
-        return configs.compute(name, (k, v) -> { // .compute will place the result of the BiFunction inside the map at the given key.
-            if (v != null) return v; // if the value is already set, return it
-
-            try { // if there is no value; create it:
-                File file = new File(PATH_BASE + name + ".yml"); // get the file
-                file.createNewFile(); // create the file if neccessary
-
-                YamlConfiguration configuration = new YamlConfiguration(); // create the configuration
-                configuration.load(file); // load the configuration
-                return configuration; // place the configuration inside the map at the key
-            } catch (IOException | InvalidConfigurationException e) {
-                throw new RuntimeException("Configuration: " + name, e);
-            }
-        });
-    }
-
-    public final static class Const {
-        public final String VERSION;
-
-        private Const() {
-            try {
-                YamlConfiguration yml = new YamlConfiguration();
-                yml.load(new InputStreamReader(
-                        Objects.requireNonNull(Const.class.getClassLoader().getResourceAsStream("plugin.yml"),
-                                "Could not access plugin.yml")));
-
-                VERSION = yml.getString("version");
-            } catch (IOException | InvalidConfigurationException e) {
-                throw new AssertionError("Unexpected Exception", e);
-            }
-        }
-    }
-
     public enum Permission {
         // Usage Permissions
         LOCK_USE("e2uclaim.lock", "You are not allowed to create locks!"),
@@ -295,8 +272,10 @@ public final class E2UClaim extends JavaPlugin {
         // Numeric Permissions prefix
         CLAIM_SIZE("e2uclaim.claim.size.", "");
 
-        @NotNull public final String node;
-        @Nullable public final String customMissingMessage;
+        @NotNull
+        public final String node;
+        @Nullable
+        public final String customMissingMessage;
 
         Permission(@NotNull String node, @Nullable String customMissingMessage) {
             this.node = node;
@@ -323,6 +302,23 @@ public final class E2UClaim extends JavaPlugin {
             else if (customMissingMessage.isEmpty()) return false;
             else Chat.message(user, MessageType.ERROR, customMissingMessage);
             return false;
+        }
+    }
+
+    public final static class Const {
+        public final String VERSION;
+
+        private Const() {
+            try {
+                YamlConfiguration yml = new YamlConfiguration();
+                yml.load(new InputStreamReader(
+                        Objects.requireNonNull(Const.class.getClassLoader().getResourceAsStream("plugin.yml"),
+                                "Could not access plugin.yml")));
+
+                VERSION = yml.getString("version");
+            } catch (IOException | InvalidConfigurationException e) {
+                throw new AssertionError("Unexpected Exception", e);
+            }
         }
     }
 }
