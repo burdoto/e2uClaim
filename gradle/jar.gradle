@@ -1,0 +1,24 @@
+task buildPlugin(type: Copy, dependsOn: 'shadowJar') {
+    from shadowJar.outputs.files.singleFile
+    rename { String filename -> return pluginJarName }
+    into "$buildDir/libs"
+}
+
+task testPlugin(type: Copy, dependsOn: ['deleteTestPlugin', 'buildPlugin']) {
+    from buildPlugin.outputs.files.singleFile;
+    into file("test/plugins/")
+}
+
+task deleteTestPlugin(type: Delete) {
+    delete 'test/plugins/' + pluginJarName
+}
+
+compileJava {
+    options.encoding = "UTF-8"
+}
+
+processResources {
+    from(sourceSets.main.resources) {
+        expand project.properties
+    }
+}
