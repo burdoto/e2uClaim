@@ -1,7 +1,6 @@
 package de.kaleidox.e2uClaim.util;
 
 import de.kaleidox.e2uClaim.E2UClaim;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -12,14 +11,17 @@ import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-import static java.lang.Math.pow;
-import static java.lang.Math.sqrt;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
+
 import static de.kaleidox.e2uClaim.util.MathUtil.raising;
+import static java.lang.Math.*;
 
 public final class WorldUtil {
     private WorldUtil() {
@@ -85,6 +87,7 @@ public final class WorldUtil {
         }
     }
 
+    @Deprecated
     @MagicConstant(valuesFromClass = ChestState.class)
     public static int chestState(Block block) {
         BlockState state = block.getState();
@@ -98,6 +101,31 @@ public final class WorldUtil {
             return ChestState.SIMPLE_CHEST;
         }
         return ChestState.NO_CHEST;
+    }
+
+    public static Optional<Block> doubleChest$otherSide(Block selectedChest) {
+        if (selectedChest.getType() != Material.CHEST && selectedChest.getType() != Material.TRAPPED_CHEST) {
+            return Optional.empty();
+        } else {
+            InventoryHolder inventoryHolder = ((Chest) selectedChest.getState()).getInventory().getHolder();
+
+            if (!(inventoryHolder instanceof DoubleChest)) {
+                return Optional.empty();
+            } else {
+                final DoubleChest doubleChest = (DoubleChest) inventoryHolder;
+
+                return Stream.of(doubleChest.getLeftSide(), doubleChest.getRightSide())
+                        .filter(Objects::nonNull)
+                        .map(Chest.class::cast)
+                        .findAny()
+                        .map(BlockState::getBlock);
+            }
+        }
+    }
+
+    @NotNull
+    private static Location copyLocation(Block block) {
+        return location(block.getWorld(), xyz(block.getLocation()));
     }
 
     public static boolean isExcludedWorld(Player player) {

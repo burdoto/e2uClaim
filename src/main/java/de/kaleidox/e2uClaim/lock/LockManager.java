@@ -1,12 +1,7 @@
 package de.kaleidox.e2uClaim.lock;
 
 import java.io.Closeable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import de.kaleidox.e2uClaim.E2UClaim;
@@ -19,6 +14,7 @@ import de.kaleidox.e2uClaim.util.WorldUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.configuration.ConfigurationSection;
@@ -104,9 +100,11 @@ public enum LockManager implements Listener, Initializable, Closeable {
         event.setLine(0, "§8[§3Lock§8]");
         message(player, MessageType.INFO, "Lock created for %s at %s.",
                 targetBlock.getType(), Arrays.toString(target));
-        if (WorldUtil.chestState(targetBlock) == WorldUtil.ChestState.DOUBLE_CHEST)
-            message(player, MessageType.WARN, "Warning: Multiblock-Chest locking is currently not supported." +
-                    " Please lock both sides of the chest with one sign each.");
+        final Optional<Block> otherSide = WorldUtil.doubleChest$otherSide(targetBlock);
+        //noinspection OptionalAssignedToNull
+        if (otherSide == null) //block is not chest
+            return;
+        otherSide.ifPresent(System.out::println);
     }
 
     public void requestLock(Player player) {
