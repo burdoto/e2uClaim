@@ -6,7 +6,10 @@ version '0.2.1-SNAPSHOT'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-repositories.jcenter()
+repositories {
+    mavenLocal()
+    jcenter()
+}
 
 compileJava {
     options.encoding = "UTF-8"
@@ -31,7 +34,6 @@ task deleteTestPlugin(type: Delete) {
 }
 
 dependencies {
-    compileOnly fileTree("libs")
-
-    compileOnly 'org.jetbrains:annotations:17.0.0'
+    compileOnly 'org.spigotmc:spigot-api:1.14.4-R0.1-SNAPSHOT'
+    compileOnly 'org.jetbrains:annotations:19.0.0'
 }
