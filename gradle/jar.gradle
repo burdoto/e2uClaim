@@ -1,16 +1,16 @@
 task buildPlugin(type: Copy, dependsOn: 'shadowJar') {
     from shadowJar.outputs.files.singleFile
     rename { String filename -> return pluginJarName }
-    into "$buildDir/libs"
+    into "$buildDir/libs/renamed"
 }
 
 task testPlugin(type: Copy, dependsOn: ['deleteTestPlugin', 'buildPlugin']) {
     from buildPlugin.outputs.files.singleFile;
-    into file("test/plugins/")
+    into file("$testServerDir/plugins/")
 }
 
 task deleteTestPlugin(type: Delete) {
-    delete 'test/plugins/' + pluginJarName
+    delete "$testServerDir/plugins/$pluginJarName"
 }
 
 compileJava {

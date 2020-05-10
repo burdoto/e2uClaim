@@ -1,8 +1,8 @@
 main: de.kaleidox.e2uClaim.E2UClaim
 name: ${rootProject.name}
-version: $version
-author: Kaleidox
-description: easy-to-use claiming plugin
+version: $pluginVersion
+author: $userbase
+description: $projectDescription
 api-version: $mcVersionMj
 
 commands:
