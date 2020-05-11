@@ -4,6 +4,8 @@ version: $pluginVersion
 author: $userbase
 description: $projectDescription
 api-version: $mcVersionMj
+depend:
+  - Spiroid
 
 commands:
   e2uClaim:
