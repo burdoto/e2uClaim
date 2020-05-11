@@ -6,7 +6,6 @@ import de.kaleidox.e2uClaim.claim.ClaimManager;
 import de.kaleidox.e2uClaim.command.ClaimCommand;
 import de.kaleidox.e2uClaim.command.SystemCommand;
 import de.kaleidox.e2uClaim.exception.PluginEnableException;
-import de.kaleidox.e2uClaim.interfaces.Initializable;
 import de.kaleidox.e2uClaim.lock.LockManager;
 import de.kaleidox.e2uClaim.util.BukkitUtil;
 import de.kaleidox.e2uClaim.util.WorldUtil;
@@ -21,75 +20,19 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.comroid.spiroid.api.AbstractPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-public final class E2UClaim extends JavaPlugin {
-    public static final String PATH_BASE = "plugins/e2uClaim/";
-    private static final Initializable[] initializables;
-    private static final Closeable[] closeables;
-    public static E2UClaim INSTANCE;
-    public static Logger LOGGER;
-    public static Const CONST;
-    private static final Map<String, FileConfiguration> configs = new ConcurrentHashMap<>();
-
-    static {
-        initializables = new Initializable[]{
-                ClaimManager.INSTANCE,
-                LockManager.INSTANCE
-        };
-
-        closeables = new Closeable[]{
-                ClaimManager.INSTANCE,
-                LockManager.INSTANCE
-        };
-    }
-
-    public static FileConfiguration getConfig(String name) {
-        final File dir = new File(PATH_BASE);
-        if (!dir.exists())
-            if (dir.mkdir())
-                LOGGER.fine("Created configuration Directory");
-
-        return configs.compute(name, (k, v) -> { // .compute will place the result of the BiFunction inside the map at the given key.
-            if (v != null) return v; // if the value is already set, return it
-
-            try { // if there is no value; create it:
-                File file = new File(PATH_BASE + name + ".yml"); // get the file
-                file.createNewFile(); // create the file if neccessary
-
-                YamlConfiguration configuration = new YamlConfiguration(); // create the configuration
-                configuration.load(file); // load the configuration
-                return configuration; // place the configuration inside the map at the key
-            } catch (IOException | InvalidConfigurationException e) {
-                throw new RuntimeException("Configuration: " + name, e);
-            }
-        });
-    }
-
-    @Override
-    public void reloadConfig() {
-        configs.forEach((name, config) -> {
-            try {
-                File file = new File(PATH_BASE + name + ".yml");
-                config.load(name);
-            } catch (InvalidConfigurationException | IOException e) {
-                LOGGER.severe("Error reloading config " + name + ": " + e.getMessage());
-            }
-        });
-    }
-
+public final class E2UClaim extends AbstractPlugin {
     @Override
     public boolean onCommand(
             @NotNull CommandSender sender,
@@ -156,74 +99,38 @@ public final class E2UClaim extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        INSTANCE = this;
-        LOGGER = getLogger();
-
         super.onLoad();
 
-        FileConfiguration config = getConfig("config");
+        FileConfiguration config = Objects.requireNonNull(getConfig("config"), "main config");
+
         if (!config.isSet("defaults.claim-size"))
             config.set("defaults.claim-size", 128);
         if (!config.isSet("excluded-worlds"))
             config.set("excluded-worlds", new ArrayList<>());
-        cycle();
 
         saveDefaultConfig();
         configs.put("config", getConfig("config"));
     }
 
     @Override
-    public void onDisable() {
-        super.onDisable();
-
-        for (Closeable closeable : closeables) {
-            try {
-                closeable.close();
-            } catch (IOException e) {
-                LOGGER.severe("Error closing " + closeable.toString() + ": " + e.getMessage());
-            }
-        }
-
-        configs.forEach((name, config) -> {
-            try {
-                File file = new File(PATH_BASE + name + ".yml");
-                file.createNewFile();
-
-                config.save(file);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    @Override
     public void onEnable() {
         try {
-            CONST = new Const();
             Plugin worldEdit = Bukkit.getPluginManager().getPlugin("WorldEdit");
             Plugin worldGuard = Bukkit.getPluginManager().getPlugin("WorldGuard");
             if (worldEdit != null && worldGuard != null) {
-                LOGGER.info("Detected WorldEdit and WorldGuard! Forcing WorldEdit and WorldGuard enabling...");
+                getLogger().info("Detected WorldEdit and WorldGuard! Forcing WorldEdit and WorldGuard enabling...");
                 worldEdit.getPluginLoader().enablePlugin(worldEdit);
                 worldGuard.getPluginLoader().enablePlugin(worldGuard);
-                LOGGER.info("Finished loading WorldEdit and WorldGuard. Removing WorldGuard SignChangeEvent listener...");
+                getLogger().info("Finished loading WorldEdit and WorldGuard. Removing WorldGuard SignChangeEvent listener...");
                 SignChangeEvent.getHandlerList().unregister(worldGuard);
-                LOGGER.info("Disabled WorldGuard SignChangeEvent listener! Continuing enabling...");
+                getLogger().info("Disabled WorldGuard SignChangeEvent listener! Continuing enabling...");
             }
 
             super.onEnable();
 
             World configVersion = Bukkit.getWorld("configVersion");
             if (configVersion != null)
-                E2UClaim.LOGGER.warning("World with name \"configVersion\" detected. This world will be ignored by e2uClaim.");
-
-            for (Initializable initializable : initializables) {
-                try {
-                    initializable.init();
-                } catch (IOException e) {
-                    LOGGER.severe("Error initializing " + initializable.toString() + ": " + e.getMessage());
-                }
-            }
+                getLogger().warning("World with name \"configVersion\" detected. This world will be ignored by e2uClaim.");
 
             String excluded = getConfig("config")
                     .getStringList("excluded-worlds")
@@ -235,29 +142,11 @@ public final class E2UClaim extends JavaPlugin {
                     })
                     .collect(Collectors.joining(", "));
             if (!excluded.isEmpty())
-                LOGGER.info("Excluded worlds: " + excluded);
-
-            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::cycle,
-                    BukkitUtil.time2tick(10, TimeUnit.SECONDS),
-                    BukkitUtil.time2tick(5, TimeUnit.MINUTES));
+                getLogger().info("Excluded worlds: " + excluded);
         } catch (PluginEnableException e) {
-            LOGGER.severe("Unable to load " + toString() + ": " + e.getMessage());
+            getLogger().severe("Unable to load " + toString() + ": " + e.getMessage());
             Bukkit.getPluginManager().disablePlugin(this);
         }
-    }
-
-    private void cycle() {
-        LOGGER.fine("Running plugin cycle...");
-
-        configs.forEach((configName, config) -> {
-            try {
-                File file = new File(PATH_BASE + configName + ".yml");
-                file.createNewFile();
-                config.save(file);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
     }
 
     public enum Permission {

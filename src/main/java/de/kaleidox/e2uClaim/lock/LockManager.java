@@ -29,7 +29,6 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import static de.kaleidox.e2uClaim.E2UClaim.LOGGER;
 import static de.kaleidox.e2uClaim.chat.Chat.message;
 import static de.kaleidox.e2uClaim.util.ConfigurationUtil.getConfigSection;
 import static de.kaleidox.e2uClaim.util.WorldUtil.breakDependent;
@@ -157,7 +156,7 @@ public enum LockManager implements Listener, Initializable, Closeable {
                     .filter(lock -> lock.canAccess(player))
                     .collect(Collectors.toList());
             if (toBeRemoved.size() > 1)
-                LOGGER.warning("Suspicious unlock action: More than 1 lock found!");
+                E2UClaim.instance.getLogger().warning("Suspicious unlock action: More than 1 lock found!");
             if (toBeRemoved.size() == 0) {
                 message(player, MessageType.ERROR, "There is no lock at %s!", Arrays.toString(xyz));
                 event.setCancelled(true);
@@ -221,9 +220,9 @@ public enum LockManager implements Listener, Initializable, Closeable {
     @SuppressWarnings("SwitchStatementWithTooFewBranches")
     @Override
     public void init() {
-        Bukkit.getPluginManager().registerEvents(LockManager.INSTANCE, E2UClaim.INSTANCE);
+        Bukkit.getPluginManager().registerEvents(LockManager.INSTANCE, E2UClaim.instance);
 
-        FileConfiguration claims = E2UClaim.getConfig("locks");
+        FileConfiguration claims = E2UClaim.instance.getConfig("locks");
 
         switch (claims.getInt("configVersion", 1)) {
             default:
@@ -233,28 +232,28 @@ public enum LockManager implements Listener, Initializable, Closeable {
                     if (worldName.equals("configVersion")) continue;
                     World world = Bukkit.getWorld(worldName);
                     if (world == null) {
-                        LOGGER.warning("Skipped loading locks for unknown world: " + worldName);
+                        E2UClaim.instance.getLogger().warning("Skipped loading locks for unknown world: " + worldName);
                         continue;
                     }
                     ConfigurationSection worldSection = getConfigSection(claims, worldName);
                     for (String lockName : worldSection.getKeys(false)) {
-                        LOGGER.fine("Loading lock " + lockName + "...");
+                        E2UClaim.instance.getLogger().fine("Loading lock " + lockName + "...");
                         try {
                             this.locks.add(Lock.load(world, getConfigSection(worldSection, lockName)));
                         } catch (Exception e) {
-                            LOGGER.severe("Error loading lock " + lockName + ": " + e.getMessage());
+                            E2UClaim.instance.getLogger().severe("Error loading lock " + lockName + ": " + e.getMessage());
                         }
                     }
                 }
         }
 
-        LOGGER.info("Loaded " + this.locks.size() + " lock" + (this.locks.size() != 1 ? "s" : "") + "!");
+        E2UClaim.instance.getLogger().info("Loaded " + this.locks.size() + " lock" + (this.locks.size() != 1 ? "s" : "") + "!");
     }
 
     @Override
     public void close() {
         int stored = 0;
-        FileConfiguration claims = E2UClaim.getConfig("locks");
+        FileConfiguration claims = E2UClaim.instance.getConfig("locks");
         claims.set("configVersion", 1);
 
         Map<String, List<Lock>> perWorldLocks = new HashMap<>();
@@ -275,11 +274,11 @@ public enum LockManager implements Listener, Initializable, Closeable {
                     me.save(worldSection.createSection("lock" + c++));
                     stored++;
                 } catch (Exception e) {
-                    LOGGER.severe("Error saving lock lock" + c + ": " + e.getMessage());
+                    E2UClaim.instance.getLogger().severe("Error saving lock lock" + c + ": " + e.getMessage());
                 }
             }
         }
 
-        LOGGER.info("Saved " + stored + " lock" + (stored != 1 ? "s" : "") + "!");
+        E2UClaim.instance.getLogger().info("Saved " + stored + " lock" + (stored != 1 ? "s" : "") + "!");
     }
 }

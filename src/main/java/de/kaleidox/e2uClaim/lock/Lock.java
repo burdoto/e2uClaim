@@ -37,11 +37,11 @@ public class Lock implements WorldLockable {
         this.origin = origin;
 
         if (world == null)
-            E2UClaim.LOGGER.warning("Suspicious lock loaded: world is null");
+            E2UClaim.instance.getLogger().warning("Suspicious lock loaded: world is null");
         if (targets.length == 0)
-            E2UClaim.LOGGER.warning("Suspicious lock loaded: No targets defined");
+            E2UClaim.instance.getLogger().warning("Suspicious lock loaded: No targets defined");
         if (targets.length > 0 && (targets[0][0] == 0 && targets[0][1] == 0 && targets[0][2] == 0))
-            E2UClaim.LOGGER.warning("Suspicious lock loaded: target[0] is " + Arrays.toString(targets[0]));
+            E2UClaim.instance.getLogger().warning("Suspicious lock loaded: target[0] is " + Arrays.toString(targets[0]));
     }
 
     public World getWorld() {

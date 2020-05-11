@@ -39,7 +39,6 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import static de.kaleidox.e2uClaim.E2UClaim.LOGGER;
 import static de.kaleidox.e2uClaim.chat.Chat.message;
 import static de.kaleidox.e2uClaim.util.ConfigurationUtil.getConfigSection;
 import static de.kaleidox.e2uClaim.util.WorldUtil.isExcludedWorld;
@@ -162,7 +161,7 @@ public enum ClaimManager implements Listener, Initializable, Closeable {
                             .mapToInt(claim -> (int) WorldUtil.dist(claim.getArea()[0], claim.getArea()[1]))
                             .sum() + WorldUtil.dist(area[0], area[1]));
                     int maxClaimSize = BukkitUtil.getNumericPermissionValue(E2UClaim.Permission.CLAIM_SIZE, player,
-                            () -> E2UClaim.getConfig("config").getInt("defaults.claim-size"));
+                            () -> E2UClaim.instance.getConfig().getInt("defaults.claim-size"));
                     if (maxClaimSize < newTotalClaimSize) {
                         message(player, MessageType.ERROR, "Your maximum total claim side of %s was exceeded." +
                                 " (New Size would be %s)", maxClaimSize, newTotalClaimSize);
@@ -219,9 +218,9 @@ public enum ClaimManager implements Listener, Initializable, Closeable {
     @SuppressWarnings("SwitchStatementWithTooFewBranches")
     @Override
     public void init() {
-        Bukkit.getPluginManager().registerEvents(ClaimManager.INSTANCE, E2UClaim.INSTANCE);
+        Bukkit.getPluginManager().registerEvents(ClaimManager.INSTANCE, E2UClaim.instance);
 
-        FileConfiguration claims = E2UClaim.getConfig("claims");
+        FileConfiguration claims = E2UClaim.instance.getConfig("claims");
 
         switch (claims.getInt("configVersion", 1)) {
             default:
@@ -231,28 +230,28 @@ public enum ClaimManager implements Listener, Initializable, Closeable {
                     if (worldName.equals("configVersion")) continue;
                     World world = Bukkit.getWorld(worldName);
                     if (world == null) {
-                        LOGGER.warning("Skipped loading claims for unknown world: " + worldName);
+                        E2UClaim.instance.getLogger().warning("Skipped loading claims for unknown world: " + worldName);
                         continue;
                     }
                     ConfigurationSection worldSection = getConfigSection(claims, worldName);
                     for (String claimName : worldSection.getKeys(false)) {
-                        LOGGER.fine("Loading claim " + claimName + "...");
+                        E2UClaim.instance.getLogger().fine("Loading claim " + claimName + "...");
                         try {
                             this.claims.add(Claim.load(world, getConfigSection(worldSection, claimName)));
                         } catch (Exception e) {
-                            LOGGER.severe("Error loading claim " + claimName + ": " + e.getMessage());
+                            E2UClaim.instance.getLogger().severe("Error loading claim " + claimName + ": " + e.getMessage());
                         }
                     }
                 }
         }
 
-        LOGGER.info("Loaded " + this.claims.size() + " claim" + (this.claims.size() != 1 ? "s" : "") + "!");
+        E2UClaim.instance.getLogger().info("Loaded " + this.claims.size() + " claim" + (this.claims.size() != 1 ? "s" : "") + "!");
     }
 
     @Override
     public void close() {
         int stored = 0;
-        FileConfiguration claims = E2UClaim.getConfig("claims");
+        FileConfiguration claims = E2UClaim.instance.getConfig("claims");
         claims.set("configVersion", 1);
 
         Map<String, List<Claim>> perWorldClaims = new HashMap<>();
@@ -273,12 +272,12 @@ public enum ClaimManager implements Listener, Initializable, Closeable {
                     me.save(worldSection.createSection("claim" + c++));
                     stored++;
                 } catch (Exception e) {
-                    LOGGER.severe("Error saving claim claim" + c + ": " + e.getMessage());
+                    E2UClaim.instance.getLogger().severe("Error saving claim claim" + c + ": " + e.getMessage());
                 }
             }
         }
 
-        LOGGER.info("Saved " + stored + " claim" + (stored != 1 ? "s" : "") + "!");
+        E2UClaim.instance.getLogger().info("Saved " + stored + " claim" + (stored != 1 ? "s" : "") + "!");
     }
 
     public void listClaims(Player player, int page) {

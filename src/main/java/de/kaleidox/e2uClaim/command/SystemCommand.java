@@ -41,19 +41,19 @@ public enum SystemCommand implements Subcommand {
                         })
                         .ifPresent(System.out::println);
 
-                message(sender, MessageType.HINT, "e2uClaim v" + E2UClaim.CONST.VERSION);
+                message(sender, MessageType.HINT, "e2uClaim v" + E2UClaim.instance.version);
                 return true;
             case 1:
                 switch (args[0].toLowerCase()) {
                     case "reload":
                     case "rl":
-                        E2UClaim.INSTANCE.reloadConfig();
+                        E2UClaim.instance.reloadConfig();
                         return true;
                 }
             case 2:
                 switch (args[0].toLowerCase()) {
                     case "exclude":
-                        FileConfiguration config = E2UClaim.getConfig("config");
+                        FileConfiguration config = E2UClaim.instance.getConfig();
                         List<String> excluded = config.getStringList("excluded-worlds");
 
                         if (Bukkit.getWorld(args[1]) != null) {
@@ -96,7 +96,7 @@ public enum SystemCommand implements Subcommand {
                 switch (args[0].toLowerCase()) {
                     case "exclude":
                         for (World world : Bukkit.getWorlds()) list.add(world.getName());
-                        list.addAll(E2UClaim.getConfig("config").getStringList("excluded-worlds"));
+                        list.addAll(E2UClaim.instance.getConfig().getStringList("excluded-worlds"));
                         break;
                 }
                 break;

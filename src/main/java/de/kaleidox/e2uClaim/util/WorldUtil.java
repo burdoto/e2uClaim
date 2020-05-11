@@ -131,7 +131,7 @@ public final class WorldUtil {
     public static boolean isExcludedWorld(Player player) {
         if (E2UClaim.Permission.ADMIN.check(player, ""))
             return false;
-        return E2UClaim.getConfig("config")
+        return E2UClaim.instance.getConfig()
                 .getStringList("excluded-worlds")
                 .contains(player.getWorld().getName());
     }
