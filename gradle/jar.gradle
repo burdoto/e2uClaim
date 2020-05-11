@@ -1,7 +1,7 @@
 task buildPlugin(type: Copy, dependsOn: 'shadowJar') {
     from shadowJar.outputs.files.singleFile
     rename { String filename -> return pluginJarName }
-    into "$buildDir/libs/renamed"
+    into "$rootDir/out"
 }
 
 task testPlugin(type: Copy, dependsOn: ['deleteTestPlugin', 'buildPlugin']) {
