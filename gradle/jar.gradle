@@ -1,5 +1,5 @@
-task buildPlugin(type: Copy, dependsOn: 'shadowJar') {
-    from shadowJar.outputs.files.singleFile
+task buildPlugin(type: Copy, dependsOn: 'jar') {
+    from jar.outputs.files.singleFile
     rename { String filename -> return pluginJarName }
     into "$rootDir/out"
 }
