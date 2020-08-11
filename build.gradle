@@ -27,7 +27,7 @@ repositories {
 
 dependencies {
     compileOnly "org.spigotmc:spigot-api:$mcVersion-$spigotRC-SNAPSHOT"
-    compileOnly 'org.jetbrains:annotations:19.0.0'
+    compileOnly 'org.jetbrains:annotations:20.0.0'
 
     implementation 'org.comroid:spiroid-api:0.3.0-SNAPSHOT'
     implementation 'org.comroid:common-util:1.4.1-SNAPSHOT'
