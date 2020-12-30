@@ -31,5 +31,5 @@ dependencies {
 
     implementation 'org.comroid:spiroid-api:0.3.0-SNAPSHOT'
     implementation 'org.comroid:common-util:1.4.1-SNAPSHOT'
-    implementation 'org.comroid:uniform:0.12.1-SNAPSHOT'
+    implementation 'org.comroid:uniform:1.0.0-SNAPSHOT'
 }
