@@ -1,14 +1,13 @@
 package de.kaleidox.e2uClaim.command;
 
-import java.util.ArrayList;
-import java.util.Optional;
-
 import de.kaleidox.e2uClaim.E2UClaim;
 import de.kaleidox.e2uClaim.claim.ClaimManager;
 import de.kaleidox.e2uClaim.util.BukkitUtil;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Optional;
 
 @SuppressWarnings("SwitchStatementWithTooFewBranches")
 public enum ClaimCommand implements Subcommand {

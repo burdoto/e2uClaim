@@ -1,9 +1,9 @@
 package de.kaleidox.e2uClaim.command;
 
-import java.util.ArrayList;
-
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Contract;
+
+import java.util.ArrayList;
 
 public interface Subcommand {
     boolean execute(CommandSender sender, String[] args);

@@ -1,12 +1,7 @@
 package de.kaleidox.e2uClaim.command;
 
-import java.awt.*;
-import java.util.*;
-import java.util.List;
-
 import de.kaleidox.e2uClaim.E2UClaim;
 import de.kaleidox.e2uClaim.chat.MessageType;
-
 import de.kaleidox.e2uClaim.util.BukkitUtil;
 import de.kaleidox.e2uClaim.util.WorldUtil;
 import org.bukkit.Bukkit;
@@ -15,7 +10,10 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static de.kaleidox.e2uClaim.chat.Chat.message;
 

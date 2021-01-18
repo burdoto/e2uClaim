@@ -1,15 +1,8 @@
 package de.kaleidox.e2uClaim.lock;
 
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-
 import de.kaleidox.e2uClaim.E2UClaim;
 import de.kaleidox.e2uClaim.interfaces.WorldLockable;
 import de.kaleidox.e2uClaim.util.WorldUtil;
-
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -19,30 +12,15 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.*;
+
 public class Lock implements WorldLockable {
     private final World world;
     private final UUID owner;
     private final int[][] targets;
-    private @Nullable final int[] origin;
+    private @Nullable
+    final int[] origin;
     private LockConfiguration config;
-
-    public Lock(World world, UUID owner, int[] target, @Nullable int[] origin) {
-        this(world, owner, processTarget(world, target), origin);
-    }
-
-    private Lock(World world, UUID owner, int[][] targets, @Nullable int[] origin) {
-        this.world = world;
-        this.owner = owner;
-        this.targets = targets;
-        this.origin = origin;
-
-        if (world == null)
-            E2UClaim.instance.getLogger().warning("Suspicious lock loaded: world is null");
-        if (targets.length == 0)
-            E2UClaim.instance.getLogger().warning("Suspicious lock loaded: No targets defined");
-        if (targets.length > 0 && (targets[0][0] == 0 && targets[0][1] == 0 && targets[0][2] == 0))
-            E2UClaim.instance.getLogger().warning("Suspicious lock loaded: target[0] is " + Arrays.toString(targets[0]));
-    }
 
     public World getWorld() {
         return world;
@@ -71,47 +49,22 @@ public class Lock implements WorldLockable {
         return world.getBlockAt(targets[0][0], targets[0][1], targets[0][2]).getType();
     }
 
-    @Override
-    public <T extends CommandSender & Entity> boolean canAccess(T player) {
-        return E2UClaim.Permission.LOCK_OVERRIDE.check(player) || player.getUniqueId().equals(owner);
+    public Lock(World world, UUID owner, int[] target, @Nullable int[] origin) {
+        this(world, owner, processTarget(world, target), origin);
     }
 
-    @Override
-    public boolean isLocked(int[] xyz) {
-        for (int[] locked : targets)
-            if (Arrays.equals(locked, xyz))
-                return true;
-        return getOrigin().map(sign -> Arrays.equals(sign, xyz)).orElse(false);
-    }
+    private Lock(World world, UUID owner, int[][] targets, @Nullable int[] origin) {
+        this.world = world;
+        this.owner = owner;
+        this.targets = targets;
+        this.origin = origin;
 
-    public boolean interferes(Lock with) {
-        for (int[] locked : with.targets)
-            if (isLocked(locked))
-                return true;
-        return false;
-    }
-
-    public boolean interferes(int[][] area) {
-        for (int[] test : targets)
-            if (WorldUtil.inside(area, test))
-                return true;
-        return false;
-    }
-
-    public void save(ConfigurationSection config) {
-        config.set("owner", owner.toString());
-
-        for (int i = 0; i < targets.length; i++) {
-            config.set("target." + i + ".x", targets[i][0]);
-            config.set("target." + i + ".y", targets[i][1]);
-            config.set("target." + i + ".z", targets[i][2]);
-        }
-
-        getOrigin().ifPresent(origin -> {
-            config.set("origin.x", origin[0]);
-            config.set("origin.y", origin[1]);
-            config.set("origin.z", origin[2]);
-        });
+        if (world == null)
+            E2UClaim.instance.getLogger().warning("Suspicious lock loaded: world is null");
+        if (targets.length == 0)
+            E2UClaim.instance.getLogger().warning("Suspicious lock loaded: No targets defined");
+        if (targets.length > 0 && (targets[0][0] == 0 && targets[0][1] == 0 && targets[0][2] == 0))
+            E2UClaim.instance.getLogger().warning("Suspicious lock loaded: target[0] is " + Arrays.toString(targets[0]));
     }
 
     public static Lock load(World world, ConfigurationSection config) {
@@ -155,6 +108,49 @@ public class Lock implements WorldLockable {
         }
 
         return new int[][]{target};
+    }
+
+    @Override
+    public <T extends CommandSender & Entity> boolean canAccess(T player) {
+        return E2UClaim.Permission.LOCK_OVERRIDE.check(player) || player.getUniqueId().equals(owner);
+    }
+
+    @Override
+    public boolean isLocked(int[] xyz) {
+        for (int[] locked : targets)
+            if (Arrays.equals(locked, xyz))
+                return true;
+        return getOrigin().map(sign -> Arrays.equals(sign, xyz)).orElse(false);
+    }
+
+    public boolean interferes(Lock with) {
+        for (int[] locked : with.targets)
+            if (isLocked(locked))
+                return true;
+        return false;
+    }
+
+    public boolean interferes(int[][] area) {
+        for (int[] test : targets)
+            if (WorldUtil.inside(area, test))
+                return true;
+        return false;
+    }
+
+    public void save(ConfigurationSection config) {
+        config.set("owner", owner.toString());
+
+        for (int i = 0; i < targets.length; i++) {
+            config.set("target." + i + ".x", targets[i][0]);
+            config.set("target." + i + ".y", targets[i][1]);
+            config.set("target." + i + ".z", targets[i][2]);
+        }
+
+        getOrigin().ifPresent(origin -> {
+            config.set("origin.x", origin[0]);
+            config.set("origin.y", origin[1]);
+            config.set("origin.z", origin[2]);
+        });
     }
 
     public enum Multiblock {

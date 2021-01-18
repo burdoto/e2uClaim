@@ -1,8 +1,8 @@
 package de.kaleidox.e2uClaim.util;
 
-import java.util.Objects;
-
 import org.bukkit.configuration.ConfigurationSection;
+
+import java.util.Objects;
 
 public final class ConfigurationUtil {
     public static ConfigurationSection getConfigSection(ConfigurationSection from, String name) {

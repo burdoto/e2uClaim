@@ -1,20 +1,14 @@
 package de.kaleidox.e2uClaim.lock;
 
-import java.io.Closeable;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import de.kaleidox.e2uClaim.E2UClaim;
 import de.kaleidox.e2uClaim.chat.Chat;
 import de.kaleidox.e2uClaim.chat.MessageType;
 import de.kaleidox.e2uClaim.exception.PluginEnableException;
 import de.kaleidox.e2uClaim.interfaces.Initializable;
 import de.kaleidox.e2uClaim.util.WorldUtil;
-
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.configuration.ConfigurationSection;
@@ -29,11 +23,13 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.io.Closeable;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import static de.kaleidox.e2uClaim.chat.Chat.message;
 import static de.kaleidox.e2uClaim.util.ConfigurationUtil.getConfigSection;
-import static de.kaleidox.e2uClaim.util.WorldUtil.breakDependent;
-import static de.kaleidox.e2uClaim.util.WorldUtil.isExcludedWorld;
-import static de.kaleidox.e2uClaim.util.WorldUtil.xyz;
+import static de.kaleidox.e2uClaim.util.WorldUtil.*;
 
 public enum LockManager implements Listener, Initializable, Closeable {
     INSTANCE;
