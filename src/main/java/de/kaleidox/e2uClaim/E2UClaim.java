@@ -31,9 +31,7 @@ public final class E2UClaim extends AbstractPlugin {
     }
 
     @Override
-    public void onLoad() {
-        super.onLoad();
-
+    public void load() {
         FileConfiguration config = Objects.requireNonNull(getConfig("config"), "main config");
 
         if (!config.isSet("defaults.claim-size"))
@@ -46,7 +44,7 @@ public final class E2UClaim extends AbstractPlugin {
     }
 
     @Override
-    public void onEnable() {
+    public void enable() {
         try {
             Plugin worldEdit = Bukkit.getPluginManager().getPlugin("WorldEdit");
             Plugin worldGuard = Bukkit.getPluginManager().getPlugin("WorldGuard");
@@ -58,8 +56,6 @@ public final class E2UClaim extends AbstractPlugin {
                 SignChangeEvent.getHandlerList().unregister(worldGuard);
                 getLogger().info("Disabled WorldGuard SignChangeEvent listener! Continuing enabling...");
             }
-
-            super.onEnable();
 
             World configVersion = Bukkit.getWorld("configVersion");
             if (configVersion != null)
