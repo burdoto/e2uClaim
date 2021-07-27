@@ -1,6 +1,6 @@
 main: de.kaleidox.e2uClaim.E2UClaim
-name: ${rootProject.name}
-version: $pluginVersion
+name: $name
+version: $version
 author: $userbase
 description: $projectDescription
 api-version: $mcVersionMj
