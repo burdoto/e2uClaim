@@ -22,7 +22,7 @@ repositories {
 
 dependencies {
     compileOnly "org.spigotmc:spigot-api:$mcVersion-$spigotRC-SNAPSHOT"
-    compileOnly 'org.jetbrains:annotations:19.0.0'
+    compileOnly 'org.jetbrains:annotations:21.0.1'
 
     implementation 'org.comroid:api:+'
     implementation 'org.comroid:uniform:+'
