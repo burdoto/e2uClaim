@@ -20,6 +20,14 @@ public enum BaseCommand implements SpiroidCommand {
             return null;
         }
     },
+    unclaim(ClaimSubcommand.values()) {
+        @Override
+        public @Nullable String execute(CommandSender sender, String[] args) {
+            Player player = BukkitUtil.getPlayer(sender).orElseThrow(NoSuchElementException::new);
+            ClaimManager.INSTANCE.requestUnclaiming(player);
+            return null;
+        }
+    },
     lock() {
         @Override
         public @Nullable String execute(CommandSender sender, String[] args) {
