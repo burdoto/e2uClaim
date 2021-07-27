@@ -12,6 +12,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.plugin.Plugin;
 import org.comroid.spiroid.api.AbstractPlugin;
+import org.comroid.spiroid.api.annotation.MinecraftPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@MinecraftPlugin(dependencies = "WorldGuard")
 public final class E2UClaim extends AbstractPlugin {
     public E2UClaim() {
         super(BaseCommand.values());
