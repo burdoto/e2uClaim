@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="e2uClaim Test Server" type="JarApplication">
+    <option name="JAR_PATH" value="$PROJECT_DIR$/e2uClaim/test/server.jar" />
+    <option name="PROGRAM_PARAMETERS" value="nogui" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$\e2uClaim\test" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <method v="2">
+      <option name="Gradle.BeforeRunTask" enabled="true" tasks="copyPluginForTesting" externalProjectPath="$PROJECT_DIR$/Spiroid" vmOptions="" scriptParameters="" />
+      <option name="Gradle.BeforeRunTask" enabled="true" tasks="copyPluginForTesting" externalProjectPath="$PROJECT_DIR$/e2uClaim" vmOptions="" scriptParameters="" />
+    </method>
+  </configuration>
+</component>

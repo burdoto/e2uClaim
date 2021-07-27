@@ -1,7 +1,6 @@
 import org.codehaus.groovy.runtime.GStringImpl
 
 import static java.lang.System.getenv
-import static java.lang.System.getenv
 
 ext {
     isAutoDeploy = rootProject.name != 'repo' || getenv().containsKey("TEAMCITY") || getenv().containsKey("JITPACK")
@@ -10,7 +9,6 @@ ext {
     userbase = 'comroid-git'
 
     projectDescription = 'Simple Claiming using auto-managed WorldGuard regions'
-    exportedProjects = rootProject.subprojects.collect { it.name }
 
     snapshot = project.version.endsWith('SNAPSHOT')
     mcVersion = '1.16.1'
@@ -19,5 +17,5 @@ ext {
     pluginVersion = version.replace("-SNAPSHOT", "-alpha")
 
     pluginJarName = "$rootProject.name-mc$mcVersion@${project.version}.jar" as GStringImpl
-    testServerDir = System.getenv().containsKey('TEST_SERVER_DIR') ? System.getenv('TEST_SERVER_DIR') : "$rootDir/test/"
+    testServerDir = getenv().containsKey('TEST_SERVER_DIR') ? getenv('TEST_SERVER_DIR') : "$project.rootDir/test/" as GStringImpl
 }
