@@ -18,7 +18,7 @@ import java.util.Optional;
 import static de.kaleidox.e2uClaim.chat.Chat.message;
 
 @SuppressWarnings("SwitchStatementWithTooFewBranches")
-public enum SystemCommand implements Subcommand {
+public enum $SystemCommand implements Subcommand {
     INSTANCE;
 
     @Override

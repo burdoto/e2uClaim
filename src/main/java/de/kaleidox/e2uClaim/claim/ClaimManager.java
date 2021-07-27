@@ -271,13 +271,14 @@ public enum ClaimManager implements Listener, Initializable, Closeable {
         E2UClaim.instance.getLogger().info("Saved " + stored + " claim" + (stored != 1 ? "s" : "") + "!");
     }
 
+    private final int ELEMENTS_PER_PAGE = 5;
+
     public void listClaims(Player player, int page) {
-        final int elementsPerPage = 5;
 
         claims.stream()
                 .filter(claim -> claim.getOwner().equals(player.getUniqueId()))
-                .skip(elementsPerPage * page)
-                .limit(elementsPerPage)
+                .skip((long) ELEMENTS_PER_PAGE * page)
+                .limit(ELEMENTS_PER_PAGE)
                 .forEachOrdered(claim -> {
                     int[][] area = claim.getArea();
                     UUID[] members = claim.getMembers();
@@ -295,5 +296,9 @@ public enum ClaimManager implements Listener, Initializable, Closeable {
                     event.setCancelled(true);
                     message(player, MessageType.WARN, "You cannot access this block!");
                 });
+    }
+
+    public int getPageCount() {
+        return claims.size() / ELEMENTS_PER_PAGE + 1;
     }
 }

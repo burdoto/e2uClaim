@@ -1,62 +1,61 @@
 package de.kaleidox.e2uClaim.command;
 
-import de.kaleidox.e2uClaim.E2UClaim;
 import de.kaleidox.e2uClaim.claim.ClaimManager;
-import de.kaleidox.e2uClaim.util.BukkitUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.comroid.spiroid.api.command.SpiroidCommand;
+import org.comroid.spiroid.api.util.BukkitUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Optional;
+import java.util.NoSuchElementException;
+import java.util.stream.IntStream;
 
-@SuppressWarnings("SwitchStatementWithTooFewBranches")
-public enum ClaimCommand implements Subcommand {
-    INSTANCE;
+public enum ClaimCommand implements SpiroidCommand {
+    LIST("list") {
+        @Override
+        public String execute(CommandSender sender, String[] args) {
+            Player player = BukkitUtil.getPlayer(sender).orElseThrow(NoSuchElementException::new);
+            int page = args.length == 0 ? 0 : Integer.parseInt(args[0]);
+            ClaimManager.INSTANCE.listClaims(player, page);
+            return "";
+        }
+
+        @Override
+        public String[] tabComplete(String startsWith) {
+            return IntStream.range(1, ClaimManager.INSTANCE.getPageCount())
+                    .mapToObj(String::valueOf)
+                    .toArray(String[]::new);
+        }
+    },
+    INSTANCE("claim", LIST) {
+    };
+
+    private final String name;
+    private final SpiroidCommand[] subcommands;
 
     @Override
-    public boolean execute(CommandSender sender, String[] args) {
-        Optional<Player> playerOptional = BukkitUtil.getPlayer(sender);
-        if (!playerOptional.isPresent()) return false;
-        Player player = playerOptional.get();
-
-        switch (args.length) {
-            case 0:
-                return false;
-            case 1:
-                switch (args[0].toLowerCase()) {
-                    case "list":
-                        ClaimManager.INSTANCE.listClaims(player, 0);
-                        return true;
-                }
-            case 2:
-                switch (args[0].toLowerCase()) {
-                    case "list":
-                        if (args[1].matches("0-9+")) {
-                            int page = Integer.parseInt(args[1]);
-                            ClaimManager.INSTANCE.listClaims(player, 1);
-                            return true;
-                        } else return false;
-                }
-        }
-        return false;
+    public String getName() {
+        return name;
     }
 
     @Override
-    public void populateTabCompletion(CommandSender sender, String alias, String[] args, ArrayList<String> list) {
-        if (!E2UClaim.Permission.CLAIM_USE.check(sender, "")) return;
+    public SpiroidCommand[] getSubcommands() {
+        return subcommands;
+    }
 
-        switch (args.length) {
-            case 0:
-            case 1:
-                list.add("list");
-                break;
-            case 2:
-                switch (args[0].toLowerCase()) {
-                    case "list":
-                        list.add("<int>");
-                        break;
-                }
-                break;
-        }
+    ClaimCommand(String name, SpiroidCommand... subcommands) {
+        this.name = name;
+        this.subcommands = subcommands;
+    }
+
+    @Override
+    public String[] tabComplete(String startsWith) {
+        return new String[0];
+    }
+
+    @Override
+    public String execute(CommandSender sender, String[] args) {
+        return null;
     }
 }
