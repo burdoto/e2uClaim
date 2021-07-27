@@ -13,8 +13,8 @@ commands:
     aliases:
       - e2uc
     description: e2uClaim configuration command
-    permission: e2uclaim.admin
-    permission-message: "§7[§ae2uClaim§7] §cYou are missing the permission: §be2uclaim.admin§c!"
+    permission: e2uclaim.info
+    permission-message: "§7[§ae2uClaim§7] §cYou are missing the permission: §be2uclaim.info§c!"
   lock:
     description: Locks a block
     permission: e2uclaim.lock
