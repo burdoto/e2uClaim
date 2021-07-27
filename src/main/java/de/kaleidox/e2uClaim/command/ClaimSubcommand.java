@@ -3,8 +3,8 @@ package de.kaleidox.e2uClaim.command;
 import de.kaleidox.e2uClaim.claim.ClaimManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.comroid.spiroid.api.command.SpiroidCommand;
-import org.comroid.spiroid.api.util.BukkitUtil;
+import org.comroid.spiroid.command.SpiroidCommand;
+import org.comroid.spiroid.util.BukkitUtil;
 
 import java.util.NoSuchElementException;
 import java.util.stream.IntStream;

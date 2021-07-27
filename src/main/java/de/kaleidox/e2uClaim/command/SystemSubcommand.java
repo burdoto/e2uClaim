@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.comroid.spiroid.api.command.SpiroidCommand;
+import org.comroid.spiroid.command.SpiroidCommand;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

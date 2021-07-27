@@ -11,8 +11,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.plugin.Plugin;
-import org.comroid.spiroid.api.AbstractPlugin;
-import org.comroid.spiroid.api.annotation.MinecraftPlugin;
+import org.comroid.spiroid.AbstractPlugin;
+import org.comroid.spiroid.annotation.MinecraftPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -2,7 +2,7 @@ package de.kaleidox.e2uClaim.command;
 
 import de.kaleidox.e2uClaim.E2UClaim;
 import org.bukkit.command.CommandSender;
-import org.comroid.spiroid.api.command.SpiroidCommand;
+import org.comroid.spiroid.command.SpiroidCommand;
 import org.jetbrains.annotations.Nullable;
 
 public enum BaseCommand implements SpiroidCommand {
