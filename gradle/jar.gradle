@@ -1,8 +1,0 @@
-task deleteTestPlugin(type: Delete) {
-    delete "$testServerDir/plugins/${jar.outputs.files.singleFile.getName()}"
-}
-
-task copyPluginForTesting(type: Copy, dependsOn: 'deleteTestPlugin') {
-    from jar.outputs.files.singleFile;
-    into file("$testServerDir/plugins/")
-}

@@ -3,7 +3,6 @@ version '0.3.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply from: 'gradle/vars.gradle'
-apply from: 'gradle/jar.gradle'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -20,6 +19,14 @@ compileJava.options.encoding = 'UTF-8'
 processResources {
     from(sourceSets.main.resources) {
         expand project.properties
+    }
+}
+
+task copyPluginForTesting(type: Copy, dependsOn: ['jar']) {
+    from jar.outputs.files.singleFile
+    into file("$testServerDir/plugins/")
+    doFirst {
+        System.out.println("Output Directory: " + outputs.files.singleFile)
     }
 }
 
