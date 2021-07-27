@@ -3,7 +3,6 @@ package de.kaleidox.e2uClaim;
 import de.kaleidox.e2uClaim.chat.Chat;
 import de.kaleidox.e2uClaim.chat.MessageType;
 import de.kaleidox.e2uClaim.command.BaseCommand;
-import de.kaleidox.e2uClaim.exception.PluginEnableException;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -13,7 +12,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.plugin.Plugin;
 import org.comroid.spiroid.api.AbstractPlugin;
-import org.comroid.spiroid.api.command.SpiroidCommand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,37 +43,32 @@ public final class E2UClaim extends AbstractPlugin {
 
     @Override
     public void enable() {
-        try {
-            Plugin worldEdit = Bukkit.getPluginManager().getPlugin("WorldEdit");
-            Plugin worldGuard = Bukkit.getPluginManager().getPlugin("WorldGuard");
-            if (worldEdit != null && worldGuard != null) {
-                getLogger().info("Detected WorldEdit and WorldGuard! Forcing WorldEdit and WorldGuard enabling...");
-                worldEdit.getPluginLoader().enablePlugin(worldEdit);
-                worldGuard.getPluginLoader().enablePlugin(worldGuard);
-                getLogger().info("Finished loading WorldEdit and WorldGuard. Removing WorldGuard SignChangeEvent listener...");
-                SignChangeEvent.getHandlerList().unregister(worldGuard);
-                getLogger().info("Disabled WorldGuard SignChangeEvent listener! Continuing enabling...");
-            }
-
-            World configVersion = Bukkit.getWorld("configVersion");
-            if (configVersion != null)
-                getLogger().warning("World with name \"configVersion\" detected. This world will be ignored by e2uClaim.");
-
-            String excluded = getConfig("config")
-                    .getStringList("excluded-worlds")
-                    .stream()
-                    .map(str -> {
-                        if (Bukkit.getWorld(str) == null)
-                            return str + " [invalid world name]";
-                        return str;
-                    })
-                    .collect(Collectors.joining(", "));
-            if (!excluded.isEmpty())
-                getLogger().info("Excluded worlds: " + excluded);
-        } catch (PluginEnableException e) {
-            getLogger().severe("Unable to load " + toString() + ": " + e.getMessage());
-            Bukkit.getPluginManager().disablePlugin(this);
+        Plugin worldEdit = Bukkit.getPluginManager().getPlugin("WorldEdit");
+        Plugin worldGuard = Bukkit.getPluginManager().getPlugin("WorldGuard");
+        if (worldEdit != null && worldGuard != null) {
+            getLogger().info("Detected WorldEdit and WorldGuard! Forcing WorldEdit and WorldGuard enabling...");
+            worldEdit.getPluginLoader().enablePlugin(worldEdit);
+            worldGuard.getPluginLoader().enablePlugin(worldGuard);
+            getLogger().info("Finished loading WorldEdit and WorldGuard. Removing WorldGuard SignChangeEvent listener...");
+            SignChangeEvent.getHandlerList().unregister(worldGuard);
+            getLogger().info("Disabled WorldGuard SignChangeEvent listener! Continuing enabling...");
         }
+
+        World configVersion = Bukkit.getWorld("configVersion");
+        if (configVersion != null)
+            getLogger().warning("World with name \"configVersion\" detected. This world will be ignored by e2uClaim.");
+
+        String excluded = getConfig("config")
+                .getStringList("excluded-worlds")
+                .stream()
+                .map(str -> {
+                    if (Bukkit.getWorld(str) == null)
+                        return str + " [invalid world name]";
+                    return str;
+                })
+                .collect(Collectors.joining(", "));
+        if (!excluded.isEmpty())
+            getLogger().info("Excluded worlds: " + excluded);
     }
 
     public enum Permission {
