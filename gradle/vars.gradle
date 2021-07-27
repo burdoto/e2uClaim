@@ -1,14 +1,14 @@
 import org.codehaus.groovy.runtime.GStringImpl
 
 ext {
-    artifactName = 'e2uClaim'
-    userbase = 'burdoto'
+    artifactName = 'WorldGuardClaims'
+    userbase = 'comroid-git'
 
-    projectDescription = 'easy2use claiming Plugin'
+    projectDescription = 'Simple Claiming using auto-managed WorldGuard regions'
     exportedProjects = rootProject.subprojects.collect { it.name }
 
     snapshot = project.version.endsWith('SNAPSHOT')
-    mcVersion = '1.14.4'
+    mcVersion = '1.16.1'
     mcVersionMj = mcVersion.substring(0, mcVersion.lastIndexOf('.'))
     spigotRC = 'R0.1'
     pluginVersion = version.replace("-SNAPSHOT", "-alpha")
