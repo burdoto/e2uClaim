@@ -5,7 +5,6 @@
     <option name="WORKING_DIRECTORY" value="D:\dev\repo\e2uClaim\test" />
     <option name="ALTERNATIVE_JRE_PATH" />
     <method v="2">
-      <option name="Gradle.BeforeRunTask" enabled="true" tasks="clean" externalProjectPath="$PROJECT_DIR$" vmOptions="" scriptParameters="" />
       <option name="Gradle.BeforeRunTask" enabled="false" tasks="copyPluginForTesting" externalProjectPath="$PROJECT_DIR$/Spiroid" vmOptions="" scriptParameters="" />
       <option name="Gradle.BeforeRunTask" enabled="false" tasks="copyPluginForTesting" externalProjectPath="$PROJECT_DIR$/e2uClaim" vmOptions="" scriptParameters="" />
     </method>
