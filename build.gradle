@@ -34,7 +34,8 @@ dependencies {
     compileOnly 'org.jetbrains:annotations:+'
     compileOnly "org.spigotmc:spigot-api:$mcVersion-$spigotRC-SNAPSHOT"
     compileOnly 'org.comroid:uniform:+'
-    compileOnly fileTree("libs/")
+    compileOnly file("test/plugins/worldedit.jar")
+    compileOnly file("test/plugins/worldguard.jar")
 
     if (isAutoDeploy) {
         implementation 'org.comroid:spiroid-api:+'
