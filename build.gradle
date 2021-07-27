@@ -1,12 +1,7 @@
-plugins {
-    id "com.github.johnrengelman.shadow" version "5.2.0"
-}
-
 group 'de.kaleidox'
 version '0.3.0-SNAPSHOT'
 
 apply plugin: 'java'
-apply plugin: 'com.github.johnrengelman.shadow'
 apply from: 'gradle/vars.gradle'
 apply from: 'gradle/jar.gradle'
 
@@ -23,9 +18,9 @@ repositories {
 dependencies {
     compileOnly 'org.jetbrains:annotations:+'
     compileOnly "org.spigotmc:spigot-api:$mcVersion-$spigotRC-SNAPSHOT"
+    compileOnly 'org.comroid:uniform:+'
     compileOnly fileTree("libs/")
 
-    implementation 'org.comroid:uniform:+'
     if (isAutoDeploy) {
         implementation 'org.comroid:spiroid-api:+'
     } else {
