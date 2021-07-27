@@ -2,22 +2,14 @@ package de.kaleidox.e2uClaim;
 
 import de.kaleidox.e2uClaim.chat.Chat;
 import de.kaleidox.e2uClaim.chat.MessageType;
-import de.kaleidox.e2uClaim.claim.ClaimManager;
-import de.kaleidox.e2uClaim.command.$ClaimCommand;
-import de.kaleidox.e2uClaim.command.$SystemCommand;
+import de.kaleidox.e2uClaim.command.BaseCommand;
 import de.kaleidox.e2uClaim.exception.PluginEnableException;
-import de.kaleidox.e2uClaim.lock.LockManager;
-import de.kaleidox.e2uClaim.util.BukkitUtil;
-import de.kaleidox.e2uClaim.util.WorldUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.plugin.Plugin;
 import org.comroid.spiroid.api.AbstractPlugin;
@@ -28,14 +20,12 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public final class E2UClaim extends AbstractPlugin {
-    public E2UClaim(SpiroidCommand[] baseCommands, String... configNames) {
-        super(baseCommands, configNames);
+    public E2UClaim() {
+        super(BaseCommand.values());
 
 
     }

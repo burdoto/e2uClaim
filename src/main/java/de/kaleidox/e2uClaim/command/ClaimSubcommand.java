@@ -5,14 +5,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.comroid.spiroid.api.command.SpiroidCommand;
 import org.comroid.spiroid.api.util.BukkitUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.NoSuchElementException;
 import java.util.stream.IntStream;
 
-public enum ClaimCommand implements SpiroidCommand {
-    LIST("list") {
+public enum ClaimSubcommand implements SpiroidCommand {
+    list() {
         @Override
         public String execute(CommandSender sender, String[] args) {
             Player player = BukkitUtil.getPlayer(sender).orElseThrow(NoSuchElementException::new);
@@ -27,25 +25,16 @@ public enum ClaimCommand implements SpiroidCommand {
                     .mapToObj(String::valueOf)
                     .toArray(String[]::new);
         }
-    },
-    INSTANCE("claim", LIST) {
     };
 
-    private final String name;
     private final SpiroidCommand[] subcommands;
-
-    @Override
-    public String getName() {
-        return name;
-    }
 
     @Override
     public SpiroidCommand[] getSubcommands() {
         return subcommands;
     }
 
-    ClaimCommand(String name, SpiroidCommand... subcommands) {
-        this.name = name;
+    ClaimSubcommand(SpiroidCommand... subcommands) {
         this.subcommands = subcommands;
     }
 
