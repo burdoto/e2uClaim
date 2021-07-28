@@ -49,7 +49,7 @@ public class Claim extends CuboidRegion implements WorldLockable {
                 blockVector((bounds = sort(bounds[0], bounds[1]))[0]),
                 blockVector(bounds[1])
         );
-        WorldUtil.expandVert(bounds);
+        //WorldUtil.expandVert(bounds);
 
         this.owner = owner;
         this.member = member;
