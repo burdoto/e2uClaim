@@ -40,6 +40,11 @@ public enum ClaimManager implements Listener, Initializable, Closeable {
 
     private final Collection<Claim> claims = new ArrayList<>();
     private final Map<Player, int[]> awaitingClaim = new ConcurrentHashMap<>();
+    private final int ELEMENTS_PER_PAGE = 5;
+
+    public int getPageCount() {
+        return claims.size() / ELEMENTS_PER_PAGE + 1;
+    }
 
     public void requestClaiming(Player player) {
         if (awaitingClaim.remove(player) != null)
@@ -272,8 +277,6 @@ public enum ClaimManager implements Listener, Initializable, Closeable {
         E2UClaim.instance.getLogger().info("Saved " + stored + " claim" + (stored != 1 ? "s" : "") + "!");
     }
 
-    private final int ELEMENTS_PER_PAGE = 5;
-
     public void listClaims(Player player, int page) {
 
         claims.stream()
@@ -297,9 +300,5 @@ public enum ClaimManager implements Listener, Initializable, Closeable {
                     event.setCancelled(true);
                     message(player, MessageType.WARN, "You cannot access this block!");
                 });
-    }
-
-    public int getPageCount() {
-        return claims.size() / ELEMENTS_PER_PAGE + 1;
     }
 }

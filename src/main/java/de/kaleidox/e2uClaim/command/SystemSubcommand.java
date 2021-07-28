@@ -14,14 +14,14 @@ import java.util.List;
 import static de.kaleidox.e2uClaim.chat.Chat.message;
 
 public enum SystemSubcommand implements SpiroidCommand {
-    reload(){
+    reload() {
         @Override
         public String execute(CommandSender sender, String[] args) {
             E2UClaim.instance.reloadConfig();
             return "Reload Complete!";
         }
     },
-    exclude(){
+    exclude() {
         @Override
         public String[] tabComplete(String startsWith) {
             return Bukkit.getWorlds()
