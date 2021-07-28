@@ -116,6 +116,7 @@ public enum ClaimManager implements Listener, Initializable, Closeable {
                 }
 
                 if (claims.stream().noneMatch(claim -> claim.isLocked(xyz))) {
+                    // todo: Use WorldEdit selection area
                     int[][] area = WorldUtil.sort(xyz, prevTarget);
 
                     // test for interfering locks
