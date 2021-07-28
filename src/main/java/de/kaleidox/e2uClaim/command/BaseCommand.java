@@ -49,6 +49,11 @@ public enum BaseCommand implements SpiroidCommand {
         public String execute(CommandSender sender, String[] args) {
             return "e2uClaim v" + E2UClaim.instance.version;
         }
+
+        @Override
+        public boolean allowConsoleExecution() {
+            return true;
+        }
     };
 
     private final SpiroidCommand[] subcommands;
@@ -70,5 +75,10 @@ public enum BaseCommand implements SpiroidCommand {
     @Override
     public @Nullable String execute(CommandSender sender, String[] args) {
         return null;
+    }
+
+    @Override
+    public boolean allowConsoleExecution() {
+        return false;
     }
 }
