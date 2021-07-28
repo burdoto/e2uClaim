@@ -4,6 +4,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Objects;
 
+@Deprecated
 public final class ConfigurationUtil {
     public static ConfigurationSection getConfigSection(ConfigurationSection from, String name) {
         if (from.isConfigurationSection(name))

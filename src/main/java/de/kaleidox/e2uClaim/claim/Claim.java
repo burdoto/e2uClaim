@@ -1,12 +1,15 @@
 package de.kaleidox.e2uClaim.claim;
 
+import com.sk89q.worldedit.bukkit.BukkitWorld;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import de.kaleidox.e2uClaim.E2UClaim;
 import de.kaleidox.e2uClaim.interfaces.WorldLockable;
-import de.kaleidox.e2uClaim.util.WorldUtil;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
+import org.comroid.spiroid.util.WorldUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -14,27 +17,22 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-import static de.kaleidox.e2uClaim.util.WorldUtil.sort;
+import static org.comroid.spiroid.util.WorldUtil.sort;
 
-public class Claim implements WorldLockable {
-    private final World world;
+public class Claim extends CuboidRegion implements WorldLockable {
     private final UUID owner;
-    private final int[][] area;
+    private final int[][] bounds;
     // unused
     private @Nullable
     final int[] origin;
-    private UUID[] member;
+    private final UUID[] member;
 
     public UUID getOwner() {
         return owner;
     }
 
-    public World getWorld() {
-        return world;
-    }
-
-    public int[][] getArea() {
-        return area;
+    public int[][] getBounds() {
+        return bounds;
     }
 
     public Optional<int[]> getOrigin() {
@@ -45,18 +43,22 @@ public class Claim implements WorldLockable {
         return member;
     }
 
-    public Claim(World world, UUID owner, UUID[] member, int[][] area, @Nullable int[] origin) {
-        WorldUtil.expandVert(area);
+    public Claim(World world, UUID owner, UUID[] member, int[][] bounds, @Nullable int[] origin) {
+        super(new BukkitWorld(world), blockVector(bounds[0]), blockVector(bounds[1]));
+        WorldUtil.expandVert(bounds);
 
-        this.world = world;
         this.owner = owner;
         this.member = member;
-        this.area = sort(area[0], area[1]);
+        this.bounds = sort(bounds[0], bounds[1]);
         this.origin = origin;
     }
 
-    public Claim(World world, UUID owner, int[][] area, @Nullable int[] origin) {
-        this(world, owner, new UUID[0], area, origin);
+    public Claim(World world, UUID owner, int[][] bounds, @Nullable int[] origin) {
+        this(world, owner, new UUID[0], bounds, origin);
+    }
+
+    private static BlockVector3 blockVector(int[] xyz) {
+        return BlockVector3.at(xyz[0], xyz[1], xyz[2]);
     }
 
     public static Claim load(World world, ConfigurationSection config) {
@@ -86,13 +88,13 @@ public class Claim implements WorldLockable {
         for (UUID uuid : member) members.add(uuid.toString());
         config.set("members", members);
 
-        config.set("pos1.x", area[0][0]);
-        config.set("pos1.y", area[0][1]);
-        config.set("pos1.z", area[0][2]);
+        config.set("pos1.x", bounds[0][0]);
+        config.set("pos1.y", bounds[0][1]);
+        config.set("pos1.z", bounds[0][2]);
 
-        config.set("pos2.x", area[1][0]);
-        config.set("pos2.y", area[1][1]);
-        config.set("pos2.z", area[1][2]);
+        config.set("pos2.x", bounds[1][0]);
+        config.set("pos2.y", bounds[1][1]);
+        config.set("pos2.z", bounds[1][2]);
     }
 
     @Override
@@ -107,12 +109,12 @@ public class Claim implements WorldLockable {
 
     @Override
     public boolean isLocked(int[] xyz) {
-        return WorldUtil.inside(area, xyz);
+        return WorldUtil.inside(bounds, xyz);
     }
 
     public boolean overlaps(int[][] check) { // FIXME: 12.05.2019 does not work
         int[][] areaC = sort(check[0], check[1]);
-        int[][] areaM = sort(area[0], area[1]);
+        int[][] areaM = sort(bounds[0], bounds[1]);
 
         int min_x1 = areaC[0][0];
         int min_x2 = areaM[0][0];

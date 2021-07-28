@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 import static de.kaleidox.e2uClaim.util.MathUtil.raising;
 import static java.lang.Math.*;
 
+@Deprecated
 public final class WorldUtil {
     private WorldUtil() {
     }

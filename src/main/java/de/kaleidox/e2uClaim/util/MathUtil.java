@@ -2,6 +2,7 @@ package de.kaleidox.e2uClaim.util;
 
 import static java.lang.Math.abs;
 
+@Deprecated
 public final class MathUtil {
     private MathUtil() {
     }

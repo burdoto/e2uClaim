@@ -149,7 +149,7 @@ public enum ClaimManager implements Listener, Initializable, Closeable {
                     // check maximum allowed claim size
                     int newTotalClaimSize = (int) (claims.stream()
                             .filter(claim -> claim.getOwner().equals(player.getUniqueId()))
-                            .mapToInt(claim -> (int) WorldUtil.dist(claim.getArea()[0], claim.getArea()[1]))
+                            .mapToInt(claim -> (int) WorldUtil.dist(claim.getBounds()[0], claim.getBounds()[1]))
                             .sum() + WorldUtil.dist(area[0], area[1]));
                     int maxClaimSize = BukkitUtil.getNumericPermissionValue(E2UClaim.Permission.CLAIM_SIZE, player,
                             () -> E2UClaim.instance.getConfig().getInt("defaults.claim-size"));
@@ -280,7 +280,7 @@ public enum ClaimManager implements Listener, Initializable, Closeable {
                 .skip((long) ELEMENTS_PER_PAGE * page)
                 .limit(ELEMENTS_PER_PAGE)
                 .forEachOrdered(claim -> {
-                    int[][] area = claim.getArea();
+                    int[][] area = claim.getBounds();
                     UUID[] members = claim.getMembers();
                     message(player, MessageType.INFO, "Area: %s -> %s in %s; %s member"
                                     + (members.length == 1 ? "" : "s"), Arrays.toString(area[0]),
