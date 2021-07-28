@@ -44,7 +44,7 @@ public class Claim extends CuboidRegion implements WorldLockable {
     }
 
     public Claim(World world, UUID owner, UUID[] member, int[][] bounds, @Nullable int[] origin) {
-        super(new BukkitWorld(world), blockVector(bounds[0]), blockVector(bounds[1]));
+        super(new BukkitWorld(world), blockVector(sort(bounds[0], bounds[1])[0]), blockVector(sort(bounds[0], bounds[1])[1]));
         WorldUtil.expandVert(bounds);
 
         this.owner = owner;
