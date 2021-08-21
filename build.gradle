@@ -19,6 +19,7 @@ compileJava.options.encoding = 'UTF-8'
 processResources {
     from(sourceSets.main.resources) {
         expand project.properties
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
 }
 
